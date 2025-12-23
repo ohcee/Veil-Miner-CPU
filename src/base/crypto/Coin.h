@@ -38,6 +38,7 @@ public:
         GRAFT,
         RAVEN,
         WOWNERO,
+        VEIL,
         ZEPHYR,
         TOWNFORGE,
         YADA,

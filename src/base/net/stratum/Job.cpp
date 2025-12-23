@@ -169,6 +169,10 @@ size_t xmrig::Job::nonceOffset() const
         return 147;
     }
 
+    auto id = algorithm().id();
+
+    if (id == Algorithm::RX_VEIL) {return 140;}
+
     return 39;
 }
 
@@ -205,7 +209,7 @@ void xmrig::Job::setSigKey(const char *sig_key)
 
 uint32_t xmrig::Job::getNumTransactions() const
 {
-    if (!(m_algorithm.isCN() || m_algorithm.family() == Algorithm::RANDOM_X)) {
+    if (!(m_algorithm.isCN() || m_algorithm.family() == Algorithm::RANDOM_X && m_algorithm.id() != Algorithm::RX_VEIL)) {
         return 0;
     }
 

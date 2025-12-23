@@ -1,0 +1,182 @@
+name: CI Build & Release (Veil XMRig fork)
+
+on:
+  push:
+    branches: [master, main]
+    tags: ["v*"]
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            artifact: linux-x64
+          - os: macos-14
+            artifact: macos-arm64
+          - os: macos-15-intel
+            artifact: macos-x64
+          - os: windows-2022
+            artifact: windows-x64
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # =====================
+      # Dependencies
+      # =====================
+      - name: Install deps (Linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt update
+          sudo apt install -y cmake build-essential libuv1-dev libssl-dev libhwloc-dev
+
+      - name: Install deps (macOS)
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew update
+          brew install cmake libuv openssl@3 hwloc
+
+      - name: Setup MSVC (Windows)
+        if: startsWith(matrix.os, 'windows')
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Setup vcpkg (Windows)
+        if: startsWith(matrix.os, 'windows')
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: "b322364f06308bdd24823f9d8f03fe0cc86fd46f"
+
+      - name: Install deps (Windows / vcpkg)
+        if: startsWith(matrix.os, 'windows')
+        shell: powershell
+        run: |
+          vcpkg install libuv:x64-windows
+
+      # =====================
+      # Configure
+      # =====================
+      - name: Configure (Linux)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure (macOS)
+        if: startsWith(matrix.os, 'macos')
+        shell: bash
+        run: |
+          OPENSSL_ROOT="$(brew --prefix openssl@3)"
+          cmake -S . -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DOPENSSL_ROOT_DIR="$OPENSSL_ROOT" \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0
+
+      - name: Configure (Windows)
+        if: startsWith(matrix.os, 'windows')
+        shell: cmd
+        run: |
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 ^
+            -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" ^
+            -DWITH_TLS=OFF ^
+            -DWITH_HWLOC=OFF
+
+      # =====================
+      # Build
+      # =====================
+      - name: Build (Linux/macOS)
+        if: ${{ !startsWith(matrix.os, 'windows') }}
+        run: |
+          cmake --build build -j 3
+
+      - name: Build (Windows)
+        if: startsWith(matrix.os, 'windows')
+        shell: cmd
+        run: |
+          cmake --build build --config Release
+
+      # =====================
+      # Package
+      # =====================
+      - name: Package (Linux/macOS)
+        if: ${{ !startsWith(matrix.os, 'windows') }}
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp build/xmrig dist/xmrig
+          chmod +x dist/xmrig
+
+          # Include default config (if present in repo root)
+          if [ -f config.json ]; then
+            cp config.json dist/config.json
+          fi
+
+          tar -czf xmrig-${{ github.ref_name }}-${{ matrix.artifact }}.tar.gz -C dist xmrig $( [ -f dist/config.json ] && echo config.json )
+
+      - name: Package (Windows)
+        if: startsWith(matrix.os, 'windows')
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+
+          # Find produced exe (some forks may output xmrig-notls.exe)
+          $exe = Get-ChildItem -Recurse -File build -Filter "xmrig*.exe" |
+            Where-Object { $_.FullName -notmatch "\\CMakeFiles\\" } |
+            Sort-Object FullName |
+            Select-Object -First 1
+
+          if (-not $exe) {
+            Write-Host "No xmrig*.exe found. Listing build directory:"
+            Get-ChildItem -Recurse build
+            throw "No xmrig*.exe produced by build."
+          }
+
+          Copy-Item $exe.FullName "dist\xmrig.exe" -Force
+
+          # Copy config.json if present in repo root
+          if (Test-Path "config.json") {
+            Copy-Item "config.json" "dist\config.json" -Force
+          } else {
+            Write-Host "config.json not found at repo root; skipping."
+          }
+
+          # Bundle uv.dll if it exists (fixes 'uv.dll missing' for users)
+          $uv = Get-ChildItem -Recurse -File . -Filter "uv.dll" | Select-Object -First 1
+          if ($uv) {
+            Copy-Item $uv.FullName "dist\uv.dll" -Force
+          } else {
+            Write-Host "uv.dll not found; continuing (may fail for some users)."
+          }
+
+          "@echo off`r`nREM Keep xmrig.exe and uv.dll in the same folder.`r`nREM Edit config.json (recommended), or run:`r`nREM xmrig.exe -a rx/veil -o POOL:PORT -u YOUR_VEIL_ADDRESS -p x`r`nREM Tip: Run as Administrator for MSR/hugepage optimizations.`r`n" |
+            Out-File -Encoding ascii "dist\README-WINDOWS.txt"
+
+          $zipPath = "xmrig-${{ github.ref_name }}-${{ matrix.artifact }}.zip"
+
+          $paths = @("dist\xmrig.exe","dist\README-WINDOWS.txt")
+          if (Test-Path "dist\uv.dll")      { $paths += "dist\uv.dll" }
+          if (Test-Path "dist\config.json") { $paths += "dist\config.json" }
+
+          Compress-Archive -Path $paths -DestinationPath $zipPath -Force
+
+      # =====================
+      # Upload artifacts (ALL pushes/PRs) for testing
+      # =====================
+      - name: Upload build artifact (for testing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: xmrig-${{ matrix.artifact }}
+          path: |
+            xmrig-*.tar.gz
+            xmrig-*.zip
+          retention-days: 30
+          if-no-files-found: warn
