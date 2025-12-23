@@ -45,7 +45,7 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         run: |
           brew update
-          brew install cmake libuv openssl@3 hwloc
+          brew install hwloc
 
       - name: Setup MSVC (Windows)
         if: startsWith(matrix.os, 'windows')
