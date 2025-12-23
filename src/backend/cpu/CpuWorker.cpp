@@ -261,7 +261,7 @@ void xmrig::CpuWorker<N>::start()
 #       ifdef XMRIG_ALGO_RANDOMX
         bool first = true;
         alignas(16) uint64_t tempHash[8] = {};
-        sph_sha256_context sha256_ctx_cache. sha256_ctx;
+        sph_sha256_context sha256_ctx_cache, sha256_ctx;
         alignas(16) uint64_t dsha256[4] = {};
 #       endif
 
@@ -370,52 +370,58 @@ void xmrig::CpuWorker<N>::start()
                 if (job.algorithm().id() == Algorithm::RX_VEIL) {
                     const uint64_t value = bswap_64(*reinterpret_cast<uint64_t*>(m_hash));
 
-#                   ifdef XMRIG_FEATURE_BENCHMARK
+            #       ifdef XMRIG_FEATURE_BENCHMARK
                     if (m_benchSize) {
                         if (current_job_nonces[0] < m_benchSize) {
                             BenchState::add(value);
                         }
                     }
                     else
-#                   endif
+            #       endif
                     if (value < job.target()) {
                         JobResults::submit(job, current_job_nonces[0], m_hash, nullptr);
                     }
-                } else {
-                    for (size_t i = 0; i < N; ++i) {
-                        const uint64_t value = *reinterpret_cast<uint64_t*>(m_hash + (i * 32) + 24);
-
-#                       ifdef XMRIG_FEATURE_BENCHMARK
-                        if (m_benchSize) {
-                            if (current_job_nonces[i] < m_benchSize) {
-                                BenchState::add(value);
-                            }
-                        }
-                        else
-#                       endif
-                        if (value < job.target()) {
-                            JobResults::submit(job, current_job_nonces[0], m_hash, nullptr);
-                        }
-                    } else {
+                }
+                else {
+                    if (!job.hasMinerSignature()) {
                         for (size_t i = 0; i < N; ++i) {
                             const uint64_t value = *reinterpret_cast<uint64_t*>(m_hash + (i * 32) + 24);
 
-    #                       ifdef XMRIG_FEATURE_BENCHMARK
+            #               ifdef XMRIG_FEATURE_BENCHMARK
                             if (m_benchSize) {
                                 if (current_job_nonces[i] < m_benchSize) {
                                     BenchState::add(value);
                                 }
                             }
                             else
-    #                       endif
+            #               endif
                             if (value < job.target()) {
-                                JobResults::submit(job, current_job_nonces[i], m_hash + (i * 32), job.hasMinerSignature() ? miner_signature_saved : nullptr);
+                                JobResults::submit(job, current_job_nonces[0], m_hash, nullptr);
+                            }
+                        }
+                    }
+                    else {
+                        for (size_t i = 0; i < N; ++i) {
+                            const uint64_t value = *reinterpret_cast<uint64_t*>(m_hash + (i * 32) + 24);
+
+            #               ifdef XMRIG_FEATURE_BENCHMARK
+                            if (m_benchSize) {
+                                if (current_job_nonces[i] < m_benchSize) {
+                                    BenchState::add(value);
+                                }
+                            }
+                            else
+            #               endif
+                            if (value < job.target()) {
+                                JobResults::submit(job, current_job_nonces[0], m_hash + (i * 32), miner_signature_saved);
                             }
                         }
                     }
                 }
+
                 m_count += N;
             }
+
 
             if (m_yield) {
                 std::this_thread::yield();
