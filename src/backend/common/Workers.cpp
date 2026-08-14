@@ -29,9 +29,6 @@
 
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-#   include "backend/common/benchmark/Benchmark.h"
-#endif
 
 
 namespace xmrig {
@@ -100,11 +97,7 @@ bool xmrig::Workers<T>::tick(uint64_t)
         d_ptr->hashrate->add(totalHashCount, Chrono::steadyMSecs());
     }
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    return !d_ptr->benchmark || !d_ptr->benchmark->finish(totalHashCount);
-#   else
     return true;
-#   endif
 }
 
 
@@ -143,20 +136,6 @@ void xmrig::Workers<T>::stop()
 }
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-template<class T>
-void xmrig::Workers<T>::start(const std::vector<T> &data, const std::shared_ptr<Benchmark> &benchmark)
-{
-    if (!benchmark) {
-        return start(data, true);
-    }
-
-    start(data, false);
-
-    d_ptr->benchmark = benchmark;
-    d_ptr->benchmark->start();
-}
-#endif
 
 
 template<class T>

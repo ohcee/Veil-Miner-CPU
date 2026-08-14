@@ -667,11 +667,7 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 32);
@@ -801,31 +797,6 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
         ah0 ^= ch;
         idx0 = al0;
 
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        if (props.isHeavy()) {
-            int64_t n = ((int64_t*)&l0[interleaved_index<interleave>(idx0 & MASK)])[0];
-            int64_t d = ((int32_t*)&l0[interleaved_index<interleave>(idx0 & MASK)])[2];
-
-            int64_t d5;
-
-#           if defined(_MSC_VER) || (defined(__GNUC__) && (__GNUC__ == 8)) || !defined(XMRIG_64_BIT)
-            d5 = d | 5;
-#           else
-            // Workaround for stupid GCC which converts to 32 bit before doing "| 5" and then converts back to 64 bit
-            asm("mov %1, %0\n\tor $5, %0" : "=r"(d5) : "r"(d));
-#           endif
-
-            int64_t q = n / d5;
-
-            ((int64_t*)&l0[interleaved_index<interleave>(idx0 & MASK)])[0] = n ^ q;
-
-            if (ALGO == Algorithm::CN_HEAVY_XHV) {
-                d = ~d;
-            }
-
-            idx0 = d ^ q;
-        }
-#       endif
 
         if (BASE == Algorithm::CN_2) {
             bx1 = bx0;
@@ -982,30 +953,6 @@ inline void cryptonight_single_hash_asm(const uint8_t *__restrict__ input, size_
             cn_half_mainloop_bulldozer_asm(ctx);
         }
     }
-#   ifdef XMRIG_ALGO_CN_PICO
-    else if (ALGO == Algorithm::CN_PICO_0) {
-        if (ASM == Assembly::INTEL) {
-            cn_trtl_mainloop_ivybridge_asm(ctx);
-        }
-        else if (ASM == Assembly::RYZEN) {
-            cn_trtl_mainloop_ryzen_asm(ctx);
-        }
-        else {
-            cn_trtl_mainloop_bulldozer_asm(ctx);
-        }
-    }
-    else if (ALGO == Algorithm::CN_PICO_TLO) {
-        if (ASM == Assembly::INTEL) {
-            cn_tlo_mainloop_ivybridge_asm(ctx);
-        }
-        else if (ASM == Assembly::RYZEN) {
-            cn_tlo_mainloop_ryzen_asm(ctx);
-        }
-        else {
-            cn_tlo_mainloop_bulldozer_asm(ctx);
-        }
-    }
-#   endif
     else if (ALGO == Algorithm::CN_RWZ) {
         cnv2_rwz_mainloop_asm(ctx);
     }
@@ -1031,11 +978,6 @@ inline void cryptonight_single_hash_asm(const uint8_t *__restrict__ input, size_
             cn_double_mainloop_bulldozer_asm(ctx);
         }
     }
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    else if (ALGO == Algorithm::CN_UPX2) {
-        cn_upx2_mainloop_asm(ctx);
-    }
-#   endif
     else if (props.isR()) {
         ctx[0]->generated_code(ctx);
     }
@@ -1084,24 +1026,6 @@ inline void cryptonight_double_hash_asm(const uint8_t *__restrict__ input, size_
     else if (ALGO == Algorithm::CN_HALF) {
         cn_half_double_mainloop_sandybridge_asm(ctx);
     }
-#   ifdef XMRIG_ALGO_CN_PICO
-    else if (ALGO == Algorithm::CN_PICO_0) {
-        cn_trtl_double_mainloop_sandybridge_asm(ctx);
-    }
-    else if (ALGO == Algorithm::CN_PICO_TLO) {
-        cn_tlo_double_mainloop_sandybridge_asm(ctx);
-    }
-#   endif
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    else if (ALGO == Algorithm::CN_UPX2) {
-        if (Cpu::info()->arch() == ICpuInfo::ARCH_ZEN3) {
-            cnv2_upx_double_mainloop_zen3_asm(ctx);
-        }
-        else {
-            cn_upx2_double_mainloop_asm(ctx);
-        }
-    }
-#   endif
     else if (ALGO == Algorithm::CN_RWZ) {
         cnv2_rwz_double_mainloop_asm(ctx);
     }
@@ -1269,11 +1193,7 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 64);
@@ -1422,21 +1342,6 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
         ah0 ^= ch;
         idx0 = al0;
 
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        if (props.isHeavy()) {
-            int64_t n = ((int64_t*)&l0[idx0 & MASK])[0];
-            int32_t d = ((int32_t*)&l0[idx0 & MASK])[2];
-            int64_t q = n / (d | 0x5);
-
-            ((int64_t*)&l0[idx0 & MASK])[0] = n ^ q;
-
-            if (ALGO == Algorithm::CN_HEAVY_XHV) {
-                d = ~d;
-            }
-
-            idx0 = d ^ q;
-        }
-#       endif
 
         cl = ((uint64_t*) &l1[idx1 & MASK])[0];
         ch = ((uint64_t*) &l1[idx1 & MASK])[1];
@@ -1480,21 +1385,6 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
         ah1 ^= ch;
         idx1 = al1;
 
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        if (props.isHeavy()) {
-            int64_t n = ((int64_t*)&l1[idx1 & MASK])[0];
-            int32_t d = ((int32_t*)&l1[idx1 & MASK])[2];
-            int64_t q = n / (d | 0x5);
-
-            ((int64_t*)&l1[idx1 & MASK])[0] = n ^ q;
-
-            if (ALGO == Algorithm::CN_HEAVY_XHV) {
-                d = ~d;
-            }
-
-            idx1 = d ^ q;
-        }
-#       endif
 
         if (BASE == Algorithm::CN_2) {
             bx01 = bx00;
@@ -1723,13 +1613,8 @@ inline void cryptonight_triple_hash(const uint8_t *__restrict__ input, size_t si
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-    constexpr bool IS_CN_HEAVY_XHV  = ALGO == Algorithm::CN_HEAVY_XHV;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
     constexpr bool IS_CN_HEAVY_XHV  = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 32 * 3);
@@ -1821,13 +1706,8 @@ inline void cryptonight_quad_hash(const uint8_t *__restrict__ input, size_t size
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-    constexpr bool IS_CN_HEAVY_XHV  = ALGO == Algorithm::CN_HEAVY_XHV;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
     constexpr bool IS_CN_HEAVY_XHV  = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 32 * 4);
@@ -1932,13 +1812,8 @@ inline void cryptonight_penta_hash(const uint8_t *__restrict__ input, size_t siz
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-    constexpr bool IS_CN_HEAVY_XHV  = ALGO == Algorithm::CN_HEAVY_XHV;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
     constexpr bool IS_CN_HEAVY_XHV  = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 32 * 5);

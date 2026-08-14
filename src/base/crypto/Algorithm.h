@@ -114,28 +114,9 @@ public:
     static const char *kCN_DOUBLE;
     static const char *kCN_CCX;
 
-#   ifdef XMRIG_ALGO_CN_LITE
-    static const char *kCN_LITE;
-    static const char *kCN_LITE_0;
-    static const char *kCN_LITE_1;
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    static const char *kCN_HEAVY;
-    static const char *kCN_HEAVY_0;
-    static const char *kCN_HEAVY_TUBE;
-    static const char *kCN_HEAVY_XHV;
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    static const char *kCN_PICO;
-    static const char *kCN_PICO_0;
-    static const char *kCN_PICO_TLO;
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    static const char *kCN_UPX2;
-#   endif
 
 #   ifdef XMRIG_ALGO_RANDOMX
     static const char *kRX;
@@ -148,22 +129,8 @@ public:
     static const char *kRX_YADA;
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    static const char *kAR2;
-    static const char *kAR2_CHUKWA;
-    static const char *kAR2_CHUKWA_V2;
-    static const char *kAR2_WRKZ;
-#   endif
 
-#   ifdef XMRIG_ALGO_KAWPOW
-    static const char *kKAWPOW;
-    static const char *kKAWPOW_RVN;
-#   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    static const char* kGHOSTRIDER;
-    static const char* kGHOSTRIDER_RTM;
-#   endif
 
     inline Algorithm() = default;
     inline Algorithm(const char *algo) : m_id(parse(algo))  {}

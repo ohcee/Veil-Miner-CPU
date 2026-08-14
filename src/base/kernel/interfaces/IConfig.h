@@ -67,13 +67,6 @@ public:
         TitleKey             = 1037,
         NoTitleKey           = 1038,
         PauseOnBatteryKey    = 1041,
-        StressKey            = 1042,
-        BenchKey             = 1043,
-        BenchSubmitKey       = 1044,
-        BenchVerifyKey       = 1045,
-        BenchSeedKey         = 1046,
-        BenchHashKey         = 1047,
-        BenchTokenKey        = 1048,
         DmiKey               = 1049,
         HugePageSizeKey      = 1050,
         PauseOnActiveKey     = 1051,
@@ -84,7 +77,6 @@ public:
         SpendSecretKey       = 1055,
         DaemonZMQPortKey     = 1056,
         HugePagesJitKey      = 1057,
-        RotationKey          = 1058,
         DaemonJobTimeoutKey  = 1059,
 
         // xmrig common
@@ -109,7 +101,6 @@ public:
         CPUMaxThreadsKey     = 1026,
         MemoryPoolKey        = 1027,
         YieldKey             = 1030,
-        Argon2ImplKey        = 1039,
         RandomXCacheQoSKey   = 1040,
 
         // xmrig-proxy

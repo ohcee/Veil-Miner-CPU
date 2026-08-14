@@ -404,11 +404,7 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 32);
@@ -515,23 +511,6 @@ inline void cryptonight_single_hash(const uint8_t *__restrict__ input, size_t si
         ah0 ^= ch;
         idx0 = al0;
 
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        if (props.isHeavy()) {
-            const int64x2_t x = vld1q_s64(reinterpret_cast<const int64_t *>(&l0[idx0 & MASK]));
-            const int64_t n   = vgetq_lane_s64(x, 0);
-            const int32_t d   = vgetq_lane_s32(x, 2);
-            const int64_t q   = n / (d | 0x5);
-
-            ((int64_t*)&l0[idx0 & MASK])[0] = n ^ q;
-
-            if (ALGO == Algorithm::CN_HEAVY_XHV) {
-                idx0 = (~d) ^ q;
-            }
-            else {
-                idx0 = d ^ q;
-            }
-        }
-#       endif
 
         if (BASE == Algorithm::CN_2) {
             bx1 = bx0;
@@ -553,11 +532,7 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
     constexpr size_t MASK        = props.mask();
     constexpr Algorithm::Id BASE = props.base();
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    constexpr bool IS_CN_HEAVY_TUBE = ALGO == Algorithm::CN_HEAVY_TUBE;
-#   else
     constexpr bool IS_CN_HEAVY_TUBE = false;
-#   endif
 
     if (BASE == Algorithm::CN_1 && size < 43) {
         memset(output, 0, 64);
@@ -691,23 +666,6 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
         ah0 ^= ch;
         idx0 = al0;
 
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        if (props.isHeavy()) {
-            const int64x2_t x = vld1q_s64(reinterpret_cast<const int64_t *>(&l0[idx0 & MASK]));
-            const int64_t n   = vgetq_lane_s64(x, 0);
-            const int32_t d   = vgetq_lane_s32(x, 2);
-            const int64_t q   = n / (d | 0x5);
-
-            ((int64_t*)&l0[idx0 & MASK])[0] = n ^ q;
-
-            if (ALGO == Algorithm::CN_HEAVY_XHV) {
-                idx0 = (~d) ^ q;
-            }
-            else {
-                idx0 = d ^ q;
-            }
-        }
-#       endif
 
         cl = ((uint64_t*) &l1[idx1 & MASK])[0];
         ch = ((uint64_t*) &l1[idx1 & MASK])[1];
@@ -751,23 +709,6 @@ inline void cryptonight_double_hash(const uint8_t *__restrict__ input, size_t si
         ah1 ^= ch;
         idx1 = al1;
 
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        if (props.isHeavy()) {
-            const int64x2_t x = vld1q_s64(reinterpret_cast<const int64_t *>(&l1[idx1 & MASK]));
-            const int64_t n   = vgetq_lane_s64(x, 0);
-            const int32_t d   = vgetq_lane_s32(x, 2);
-            const int64_t q   = n / (d | 0x5);
-
-            ((int64_t*)&l1[idx1 & MASK])[0] = n ^ q;
-
-            if (ALGO == Algorithm::CN_HEAVY_XHV) {
-                idx1 = (~d) ^ q;
-            }
-            else {
-                idx1 = d ^ q;
-            }
-        }
-#       endif
 
         if (BASE == Algorithm::CN_2) {
             bx01 = bx00;

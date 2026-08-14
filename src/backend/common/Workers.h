@@ -56,9 +56,6 @@ public:
     void setBackend(IBackend *backend);
     void stop();
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    void start(const std::vector<T> &data, const std::shared_ptr<Benchmark> &benchmark);
-#   endif
 
 private:
     static IWorker *create(Thread<T> *handle);

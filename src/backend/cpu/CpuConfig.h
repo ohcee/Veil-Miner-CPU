@@ -52,9 +52,6 @@ public:
     static const char *kAsm;
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    static const char *kArgon2Impl;
-#   endif
 
     CpuConfig() = default;
 
@@ -70,7 +67,6 @@ public:
     inline bool isShouldSave() const                    { return m_shouldSave; }
     inline bool isYield() const                         { return m_yield; }
     inline const Assembly &assembly() const             { return m_assembly; }
-    inline const String &argon2Impl() const             { return m_argon2Impl; }
     inline const Threads<CpuThreads> &threads() const   { return m_threads; }
     inline int priority() const                         { return m_priority; }
     inline size_t hugePageSize() const                  { return m_hugePageSize * 1024U; }
@@ -96,7 +92,6 @@ private:
     int m_memoryPool        = 0;
     int m_priority          = -1;
     size_t m_hugePageSize   = kDefaultHugePageSizeKb;
-    String m_argon2Impl;
     Threads<CpuThreads> m_threads;
     uint32_t m_limit        = 100;
 };

@@ -67,7 +67,6 @@ static const option options[] = {
     { "hugepage-size",         1, nullptr, IConfig::HugePageSizeKey       },
     { "huge-pages-jit",        0, nullptr, IConfig::HugePagesJitKey       },
     { "hugepages-jit",         0, nullptr, IConfig::HugePagesJitKey       },
-    { "rotation",              1, nullptr, IConfig::RotationKey           },
     { "pass",                  1, nullptr, IConfig::PasswordKey           },
     { "print-time",            1, nullptr, IConfig::PrintTimeKey          },
     { "retries",               1, nullptr, IConfig::RetriesKey            },
@@ -85,8 +84,6 @@ static const option options[] = {
     { "cpu-memory-pool",       1, nullptr, IConfig::MemoryPoolKey         },
     { "cpu-no-yield",          0, nullptr, IConfig::YieldKey              },
     { "no-yield",              0, nullptr, IConfig::YieldKey              },
-    { "cpu-argon2-impl",       1, nullptr, IConfig::Argon2ImplKey         },
-    { "argon2-impl",           1, nullptr, IConfig::Argon2ImplKey         },
     { "verbose",               0, nullptr, IConfig::VerboseKey            },
     { "proxy",                 1, nullptr, IConfig::ProxyKey              },
     { "data-dir",              1, nullptr, IConfig::DataDirKey            },
@@ -98,18 +95,6 @@ static const option options[] = {
     { "ipv6",                  0, nullptr, IConfig::DnsIPv6Key            },
     { "dns-ttl",               1, nullptr, IConfig::DnsTtlKey             },
     { "spend-secret-key",      1, nullptr, IConfig::SpendSecretKey        },
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    { "stress",                0, nullptr, IConfig::StressKey             },
-    { "bench",                 1, nullptr, IConfig::BenchKey              },
-    { "benchmark",             1, nullptr, IConfig::BenchKey              },
-#   ifdef XMRIG_FEATURE_HTTP
-    { "submit",                0, nullptr, IConfig::BenchSubmitKey        },
-    { "verify",                1, nullptr, IConfig::BenchVerifyKey        },
-    { "token",                 1, nullptr, IConfig::BenchTokenKey         },
-#   endif
-    { "seed",                  1, nullptr, IConfig::BenchSeedKey          },
-    { "hash",                  1, nullptr, IConfig::BenchHashKey          },
-#   endif
 #   ifdef XMRIG_FEATURE_TLS
     { "tls",                   0, nullptr, IConfig::TlsKey                },
     { "tls-fingerprint",       1, nullptr, IConfig::FingerprintKey        },

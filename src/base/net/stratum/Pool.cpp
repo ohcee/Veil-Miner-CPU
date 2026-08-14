@@ -31,10 +31,6 @@
 #include "base/kernel/Platform.h"
 #include "base/net/stratum/Client.h"
 
-#if defined XMRIG_ALGO_KAWPOW || defined XMRIG_ALGO_GHOSTRIDER
-#   include "base/net/stratum/AutoClient.h"
-#   include "base/net/stratum/EthStratumClient.h"
-#endif
 
 
 #ifdef XMRIG_FEATURE_HTTP
@@ -43,10 +39,6 @@
 #endif
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-#   include "base/net/stratum/benchmark/BenchClient.h"
-#   include "base/net/stratum/benchmark/BenchConfig.h"
-#endif
 
 
 #ifdef _MSC_VER
@@ -152,29 +144,6 @@ xmrig::Pool::Pool(const rapidjson::Value &object) :
 }
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-xmrig::Pool::Pool(const std::shared_ptr<BenchConfig> &benchmark) :
-    m_mode(MODE_BENCHMARK),
-    m_flags(1 << FLAG_ENABLED),
-    m_url(BenchConfig::kBenchmark),
-    m_benchmark(benchmark)
-{
-}
-
-
-xmrig::BenchConfig *xmrig::Pool::benchmark() const
-{
-    assert(m_mode == MODE_BENCHMARK && m_benchmark);
-
-    return m_benchmark.get();
-}
-
-
-uint32_t xmrig::Pool::benchSize() const
-{
-    return benchmark()->size();
-}
-#endif
 
 
 bool xmrig::Pool::isEnabled() const
@@ -226,13 +195,6 @@ xmrig::IClient *xmrig::Pool::createClient(int id, IClientListener *listener) con
     IClient *client = nullptr;
 
     if (m_mode == MODE_POOL) {
-#       if defined XMRIG_ALGO_KAWPOW || defined XMRIG_ALGO_GHOSTRIDER
-        const uint32_t f = m_algorithm.family();
-        if ((f == Algorithm::KAWPOW) || (f == Algorithm::GHOSTRIDER) || (m_coin == Coin::RAVEN)) {
-            client = new EthStratumClient(id, Platform::userAgent(), listener);
-        }
-        else
-#       endif
         {
             client = new Client(id, Platform::userAgent(), listener);
         }
@@ -243,16 +205,6 @@ xmrig::IClient *xmrig::Pool::createClient(int id, IClientListener *listener) con
     }
     else if (m_mode == MODE_SELF_SELECT) {
         client = new SelfSelectClient(id, Platform::userAgent(), listener, m_submitToOrigin);
-    }
-#   endif
-#   if defined XMRIG_ALGO_KAWPOW || defined XMRIG_ALGO_GHOSTRIDER
-    else if (m_mode == MODE_AUTO_ETH) {
-        client = new AutoClient(id, Platform::userAgent(), listener);
-    }
-#   endif
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    else if (m_mode == MODE_BENCHMARK) {
-        client = new BenchClient(m_benchmark, listener);
     }
 #   endif
 

@@ -112,10 +112,6 @@ public:
     inline Job &operator=(const Job &other)             { if (this != &other) { copy(other); } return *this; }
     inline Job &operator=(Job &&other) noexcept         { move(std::move(other)); return *this; }
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    inline uint32_t benchSize() const                   { return m_benchSize; }
-    inline void setBenchSize(uint32_t size)             { m_benchSize = size; }
-#   endif
 
 #   ifdef XMRIG_PROXY_PROJECT
     inline bool hasViewTag() const                      { return m_hasViewTag; }
@@ -188,9 +184,6 @@ private:
 
     bool m_hasMinerSignature = false;
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    uint32_t m_benchSize = 0;
-#   endif
 };
 
 

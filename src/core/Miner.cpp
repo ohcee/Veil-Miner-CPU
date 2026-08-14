@@ -56,9 +56,6 @@
 #endif
 
 
-#ifdef XMRIG_ALGO_GHOSTRIDER
-#   include "crypto/ghostrider/ghostrider.h"
-#endif
 
 
 namespace xmrig {
@@ -326,11 +323,6 @@ public:
         char avg_hashrate_buf[64];
         avg_hashrate_buf[0] = '\0';
 
-#       ifdef XMRIG_ALGO_GHOSTRIDER
-        if (algorithm.family() == Algorithm::GHOSTRIDER) {
-            snprintf(avg_hashrate_buf, sizeof(avg_hashrate_buf), " avg " CYAN_BOLD("%s %s"), Hashrate::format({ true, avg_hashrate * scale }, num + 16 * 4, 16), h);
-        }
-#       endif
 
         LOG_INFO("%s " WHITE_BOLD("speed") " 10s/60s/15m " CYAN_BOLD("%s") CYAN(" %s %s ") CYAN_BOLD("%s") " max " CYAN_BOLD("%s %s") "%s",
                  Tags::miner(),
@@ -341,11 +333,6 @@ public:
                  avg_hashrate_buf
                  );
 
-#       ifdef XMRIG_FEATURE_BENCHMARK
-        for (auto backend : backends) {
-            backend->printBenchProgress();
-        }
-#       endif
     }
 
 
@@ -354,9 +341,6 @@ public:
 #   endif
 
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    inline void initGhostRider() const { ghostrider::benchmark(); }
-#   endif
 
 
     Algorithm algorithm;
@@ -574,11 +558,6 @@ void xmrig::Miner::setJob(const Job &job)
     constexpr const bool ready = true;
 #   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    if (job.algorithm().family() == Algorithm::GHOSTRIDER) {
-        d_ptr->initGhostRider();
-    }
-#   endif
 
     mutex.unlock();
 

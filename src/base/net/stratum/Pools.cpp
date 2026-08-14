@@ -31,9 +31,6 @@
 #include "base/net/stratum/strategies/SinglePoolStrategy.h"
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-#   include "base/net/stratum/benchmark/BenchConfig.h"
-#endif
 
 
 namespace xmrig {
@@ -119,14 +116,6 @@ void xmrig::Pools::load(const IJsonReader &reader)
 {
     m_data.clear();
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    m_benchmark = std::shared_ptr<BenchConfig>(BenchConfig::create(reader.getObject(BenchConfig::kBenchmark), reader.getBool("dmi", true)));
-    if (m_benchmark) {
-        m_data.emplace_back(m_benchmark);
-
-        return;
-    }
-#   endif
 
     const rapidjson::Value &pools = reader.getArray(kPools);
     if (!pools.IsArray()) {
@@ -151,11 +140,7 @@ void xmrig::Pools::load(const IJsonReader &reader)
 
 uint32_t xmrig::Pools::benchSize() const
 {
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    return m_benchmark ? m_benchmark->size() : 0;
-#   else
     return 0;
-#   endif
 }
 
 
@@ -183,13 +168,6 @@ void xmrig::Pools::toJSON(rapidjson::Value &out, rapidjson::Document &doc) const
     using namespace rapidjson;
     auto &allocator = doc.GetAllocator();
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    if (m_benchmark) {
-        out.AddMember(StringRef(BenchConfig::kBenchmark), m_benchmark->toJSON(doc), allocator);
-
-        return;
-    }
-#   endif
 
     out.AddMember(StringRef(kPools),            toJSON(doc), allocator);
     doc.AddMember(StringRef(kRetries),          retries(), allocator);

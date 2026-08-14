@@ -258,9 +258,6 @@ void xmrig::Job::copy(const Job &other)
     memcpy(m_rawTarget, other.m_rawTarget, sizeof(m_rawTarget));
 #   endif
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    m_benchSize = other.m_benchSize;
-#   endif
 
 #   ifdef XMRIG_PROXY_PROJECT
     memcpy(m_spendSecretKey, other.m_spendSecretKey, sizeof(m_spendSecretKey));
@@ -313,9 +310,6 @@ void xmrig::Job::move(Job &&other)
     memcpy(m_rawTarget, other.m_rawTarget, sizeof(m_rawTarget));
 #   endif
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    m_benchSize = other.m_benchSize;
-#   endif
 
 #   ifdef XMRIG_PROXY_PROJECT
     memcpy(m_spendSecretKey, other.m_spendSecretKey, sizeof(m_spendSecretKey));

@@ -64,10 +64,6 @@ protected:
     void handleRequest(IApiRequest &request) override;
 #   endif
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    Benchmark *benchmark() const override;
-    void printBenchProgress() const override;
-#   endif
 
 private:
     CpuBackendPrivate *d_ptr;

@@ -58,49 +58,12 @@ size_t inline generate<Algorithm::CN>(Threads<CpuThreads> &threads, uint32_t lim
 }
 
 
-#ifdef XMRIG_ALGO_CN_LITE
-template<>
-size_t inline generate<Algorithm::CN_LITE>(Threads<CpuThreads> &threads, uint32_t limit)
-{
-    size_t count = 0;
-
-    count += generate(Algorithm::kCN_LITE, threads, Algorithm::CN_LITE_1, limit);
-
-    if (!threads.isExist(Algorithm::CN_LITE_0)) {
-        threads.disable(Algorithm::CN_LITE_0);
-        ++count;
-    }
-
-    return count;
-}
-#endif
 
 
-#ifdef XMRIG_ALGO_CN_HEAVY
-template<>
-size_t inline generate<Algorithm::CN_HEAVY>(Threads<CpuThreads> &threads, uint32_t limit)
-{
-    return generate(Algorithm::kCN_HEAVY, threads, Algorithm::CN_HEAVY_0, limit);
-}
-#endif
 
 
-#ifdef XMRIG_ALGO_CN_PICO
-template<>
-size_t inline generate<Algorithm::CN_PICO>(Threads<CpuThreads> &threads, uint32_t limit)
-{
-    return generate(Algorithm::kCN_PICO, threads, Algorithm::CN_PICO_0, limit);
-}
-#endif
 
 
-#ifdef XMRIG_ALGO_CN_FEMTO
-template<>
-size_t inline generate<Algorithm::CN_FEMTO>(Threads<CpuThreads>& threads, uint32_t limit)
-{
-    return generate(Algorithm::kCN_UPX2, threads, Algorithm::CN_UPX2, limit);
-}
-#endif
 
 
 #ifdef XMRIG_ALGO_RANDOMX
@@ -133,22 +96,8 @@ size_t inline generate<Algorithm::RANDOM_X>(Threads<CpuThreads> &threads, uint32
 #endif
 
 
-#ifdef XMRIG_ALGO_ARGON2
-template<>
-size_t inline generate<Algorithm::ARGON2>(Threads<CpuThreads> &threads, uint32_t limit)
-{
-    return generate(Algorithm::kAR2, threads, Algorithm::AR2_CHUKWA_V2, limit);
-}
-#endif
 
 
-#ifdef XMRIG_ALGO_GHOSTRIDER
-template<>
-size_t inline generate<Algorithm::GHOSTRIDER>(Threads<CpuThreads>& threads, uint32_t limit)
-{
-    return generate(Algorithm::kGHOSTRIDER, threads, Algorithm::GHOSTRIDER_RTM, limit);
-}
-#endif
 
 
 } /* namespace xmrig */

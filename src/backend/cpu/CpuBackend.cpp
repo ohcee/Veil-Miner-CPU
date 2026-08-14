@@ -43,15 +43,8 @@
 #endif
 
 
-#ifdef XMRIG_ALGO_ARGON2
-#   include "crypto/argon2/Impl.h"
-#endif
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-#   include "backend/common/benchmark/Benchmark.h"
-#   include "backend/common/benchmark/BenchState.h"
-#endif
 
 
 namespace xmrig {
@@ -154,11 +147,7 @@ public:
 
         status.start(threads, algo.l3());
 
-#       ifdef XMRIG_FEATURE_BENCHMARK
-        workers.start(threads, benchmark);
-#       else
         workers.start(threads);
-#       endif
     }
 
 
@@ -208,9 +197,6 @@ public:
     String profileName;
     Workers<CpuLaunchData> workers;
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    std::shared_ptr<Benchmark> benchmark;
-#   endif
 };
 
 
@@ -282,18 +268,6 @@ const xmrig::String &xmrig::CpuBackend::type() const
 
 void xmrig::CpuBackend::prepare(const Job &nextJob)
 {
-#   ifdef XMRIG_ALGO_ARGON2
-    const auto f = nextJob.algorithm().family();
-    if ((f == Algorithm::ARGON2) || (f == Algorithm::RANDOM_X)) {
-        if (argon2::Impl::select(d_ptr->controller->config()->cpu().argon2Impl())) {
-            LOG_INFO("%s use " WHITE_BOLD("argon2") " implementation " CSI "1;%dm" "%s",
-                     Tags::cpu(),
-                     argon2::Impl::name() == "default" ? 33 : 32,
-                     argon2::Impl::name().data()
-                     );
-        }
-    }
-#   endif
 }
 
 
@@ -357,11 +331,6 @@ void xmrig::CpuBackend::setJob(const Job &job)
 
     stop();
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    if (BenchState::size()) {
-        d_ptr->benchmark = std::make_shared<Benchmark>(threads.size(), this);
-    }
-#   endif
 
     d_ptr->threads = std::move(threads);
     d_ptr->start();
@@ -422,9 +391,6 @@ rapidjson::Value xmrig::CpuBackend::toJSON(rapidjson::Document &doc) const
     out.AddMember("asm", false, allocator);
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    out.AddMember("argon2-impl", argon2::Impl::name().toJSON(), allocator);
-#   endif
 
     out.AddMember("hugepages", d_ptr->hugePages(2, doc), allocator);
     out.AddMember("memory",    static_cast<uint64_t>(d_ptr->algo.isValid() ? (d_ptr->ways() * d_ptr->algo.l3()) : 0), allocator);
@@ -464,17 +430,3 @@ void xmrig::CpuBackend::handleRequest(IApiRequest &request)
 #endif
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-xmrig::Benchmark *xmrig::CpuBackend::benchmark() const
-{
-    return d_ptr->benchmark.get();
-}
-
-
-void xmrig::CpuBackend::printBenchProgress() const
-{
-    if (d_ptr->benchmark) {
-        d_ptr->benchmark->printProgress();
-    }
-}
-#endif

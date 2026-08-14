@@ -41,9 +41,6 @@ const char *CpuConfig::kYield               = "yield";
 const char *CpuConfig::kAsm                 = "asm";
 #endif
 
-#ifdef XMRIG_ALGO_ARGON2
-const char *CpuConfig::kArgon2Impl          = "argon2-impl";
-#endif
 
 
 extern template class Threads<CpuThreads>;
@@ -80,9 +77,6 @@ rapidjson::Value xmrig::CpuConfig::toJSON(rapidjson::Document &doc) const
     obj.AddMember(StringRef(kAsm), m_assembly.toJSON(), allocator);
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    obj.AddMember(StringRef(kArgon2Impl), m_argon2Impl.toJSON(), allocator);
-#   endif
 
     m_threads.toJSON(obj, doc);
 
@@ -144,9 +138,6 @@ void xmrig::CpuConfig::read(const rapidjson::Value &value)
         m_assembly = Json::getValue(value, kAsm);
 #       endif
 
-#       ifdef XMRIG_ALGO_ARGON2
-        m_argon2Impl = Json::getString(value, kArgon2Impl);
-#       endif
 
         m_threads.read(value);
 

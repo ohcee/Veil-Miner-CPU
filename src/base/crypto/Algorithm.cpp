@@ -51,28 +51,9 @@ const char *Algorithm::kCN_ZLS          = "cn/zls";
 const char *Algorithm::kCN_DOUBLE       = "cn/double";
 const char *Algorithm::kCN_CCX          = "cn/ccx";
 
-#ifdef XMRIG_ALGO_CN_LITE
-const char *Algorithm::kCN_LITE         = "cn-lite";
-const char *Algorithm::kCN_LITE_0       = "cn-lite/0";
-const char *Algorithm::kCN_LITE_1       = "cn-lite/1";
-#endif
 
-#ifdef XMRIG_ALGO_CN_HEAVY
-const char *Algorithm::kCN_HEAVY        = "cn-heavy";
-const char *Algorithm::kCN_HEAVY_0      = "cn-heavy/0";
-const char *Algorithm::kCN_HEAVY_TUBE   = "cn-heavy/tube";
-const char *Algorithm::kCN_HEAVY_XHV    = "cn-heavy/xhv";
-#endif
 
-#ifdef XMRIG_ALGO_CN_PICO
-const char *Algorithm::kCN_PICO         = "cn-pico";
-const char *Algorithm::kCN_PICO_0       = "cn-pico";
-const char *Algorithm::kCN_PICO_TLO     = "cn-pico/tlo";
-#endif
 
-#ifdef XMRIG_ALGO_CN_FEMTO
-const char *Algorithm::kCN_UPX2         = "cn/upx2";
-#endif
 
 #ifdef XMRIG_ALGO_RANDOMX
 const char *Algorithm::kRX              = "rx";
@@ -85,22 +66,8 @@ const char *Algorithm::kRX_SFX          = "rx/sfx";
 const char *Algorithm::kRX_YADA         = "rx/yada";
 #endif
 
-#ifdef XMRIG_ALGO_ARGON2
-const char *Algorithm::kAR2             = "argon2";
-const char *Algorithm::kAR2_CHUKWA      = "argon2/chukwa";
-const char *Algorithm::kAR2_CHUKWA_V2   = "argon2/chukwav2";
-const char *Algorithm::kAR2_WRKZ        = "argon2/ninja";
-#endif
 
-#ifdef XMRIG_ALGO_KAWPOW
-const char *Algorithm::kKAWPOW          = "kawpow";
-const char *Algorithm::kKAWPOW_RVN      = "kawpow";
-#endif
 
-#ifdef XMRIG_ALGO_GHOSTRIDER
-const char* Algorithm::kGHOSTRIDER      = "ghostrider";
-const char* Algorithm::kGHOSTRIDER_RTM  = "ghostrider";
-#endif
 
 
 #define ALGO_NAME(ALGO)         { Algorithm::ALGO, Algorithm::k##ALGO }
@@ -122,25 +89,9 @@ static const std::map<uint32_t, const char *> kAlgorithmNames = {
     ALGO_NAME(CN_DOUBLE),
     ALGO_NAME(CN_CCX),
 
-#   ifdef XMRIG_ALGO_CN_LITE
-    ALGO_NAME(CN_LITE_0),
-    ALGO_NAME(CN_LITE_1),
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    ALGO_NAME(CN_HEAVY_0),
-    ALGO_NAME(CN_HEAVY_TUBE),
-    ALGO_NAME(CN_HEAVY_XHV),
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    ALGO_NAME(CN_PICO_0),
-    ALGO_NAME(CN_PICO_TLO),
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    ALGO_NAME(CN_UPX2),
-#   endif
 
 #   ifdef XMRIG_ALGO_RANDOMX
     ALGO_NAME(RX_0),
@@ -152,19 +103,8 @@ static const std::map<uint32_t, const char *> kAlgorithmNames = {
     ALGO_NAME(RX_YADA),
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    ALGO_NAME(AR2_CHUKWA),
-    ALGO_NAME(AR2_CHUKWA_V2),
-    ALGO_NAME(AR2_WRKZ),
-#   endif
 
-#   ifdef XMRIG_ALGO_KAWPOW
-    ALGO_NAME(KAWPOW_RVN),
-#   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    ALGO_NAME(GHOSTRIDER_RTM),
-#   endif
 };
 
 
@@ -200,54 +140,9 @@ static const std::map<const char *, Algorithm::Id, aliasCompare> kAlgorithmAlias
                                     ALGO_ALIAS(CN_CCX,          "cryptonight/conceal"),
                                     ALGO_ALIAS(CN_CCX,          "cn/conceal"),
 
-#   ifdef XMRIG_ALGO_CN_LITE
-    ALGO_ALIAS_AUTO(CN_LITE_0),     ALGO_ALIAS(CN_LITE_0,       "cryptonight-lite/0"),
-                                    ALGO_ALIAS(CN_LITE_0,       "cryptonight-lite"),
-                                    ALGO_ALIAS(CN_LITE_0,       "cryptonight-light"),
-                                    ALGO_ALIAS(CN_LITE_0,       "cn-lite"),
-                                    ALGO_ALIAS(CN_LITE_0,       "cn-light"),
-                                    ALGO_ALIAS(CN_LITE_0,       "cryptonight_lite"),
-    ALGO_ALIAS_AUTO(CN_LITE_1),     ALGO_ALIAS(CN_LITE_1,       "cryptonight-lite/1"),
-                                    ALGO_ALIAS(CN_LITE_1,       "cryptonight-aeonv7"),
-                                    ALGO_ALIAS(CN_LITE_1,       "cryptonight_lite_v7"),
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    ALGO_ALIAS_AUTO(CN_HEAVY_0),    ALGO_ALIAS(CN_HEAVY_0,      "cryptonight-heavy/0"),
-                                    ALGO_ALIAS(CN_HEAVY_0,      "cryptonight-heavy"),
-                                    ALGO_ALIAS(CN_HEAVY_0,      "cn-heavy"),
-                                    ALGO_ALIAS(CN_HEAVY_0,      "cryptonight_heavy"),
-    ALGO_ALIAS_AUTO(CN_HEAVY_XHV),  ALGO_ALIAS(CN_HEAVY_XHV,    "cryptonight-heavy/xhv"),
-                                    ALGO_ALIAS(CN_HEAVY_XHV,    "cryptonight_haven"),
-    ALGO_ALIAS_AUTO(CN_HEAVY_TUBE), ALGO_ALIAS(CN_HEAVY_TUBE,   "cryptonight-heavy/tube"),
-                                    ALGO_ALIAS(CN_HEAVY_TUBE,   "cryptonight-bittube2"),
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    ALGO_ALIAS_AUTO(CN_PICO_0),     ALGO_ALIAS(CN_PICO_0,       "cryptonight-pico"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cn-pico/0"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cryptonight-pico/trtl"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cn-pico/trtl"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cryptonight-turtle"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cn-trtl"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cryptonight-ultralite"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cn-ultralite"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cryptonight_turtle"),
-                                    ALGO_ALIAS(CN_PICO_0,       "cn_turtle"),
-    ALGO_ALIAS_AUTO(CN_PICO_TLO),   ALGO_ALIAS(CN_PICO_TLO,     "cryptonight-pico/tlo"),
-                                    ALGO_ALIAS(CN_PICO_TLO,     "cryptonight/ultra"),
-                                    ALGO_ALIAS(CN_PICO_TLO,     "cn/ultra"),
-                                    ALGO_ALIAS(CN_PICO_TLO,     "cryptonight-talleo"),
-                                    ALGO_ALIAS(CN_PICO_TLO,     "cn-talleo"),
-                                    ALGO_ALIAS(CN_PICO_TLO,     "cryptonight_talleo"),
-                                    ALGO_ALIAS(CN_PICO_TLO,     "cn_talleo"),
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    ALGO_ALIAS_AUTO(CN_UPX2),       ALGO_ALIAS(CN_UPX2,         "cryptonight/upx2"),
-                                    ALGO_ALIAS(CN_UPX2,         "cn-extremelite/upx2"),
-                                    ALGO_ALIAS(CN_UPX2,         "cryptonight-upx/2"),
-#   endif
 
 #   ifdef XMRIG_ALGO_RANDOMX
     ALGO_ALIAS_AUTO(RX_0),          ALGO_ALIAS(RX_0,            "randomx/0"),
@@ -269,20 +164,8 @@ static const std::map<const char *, Algorithm::Id, aliasCompare> kAlgorithmAlias
                                     ALGO_ALIAS(RX_YADA,         "randomyada"),
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    ALGO_ALIAS_AUTO(AR2_CHUKWA),    ALGO_ALIAS(AR2_CHUKWA,      "chukwa"),
-    ALGO_ALIAS_AUTO(AR2_CHUKWA_V2), ALGO_ALIAS(AR2_CHUKWA,      "chukwav2"),
-    ALGO_ALIAS_AUTO(AR2_WRKZ),      ALGO_ALIAS(AR2_WRKZ,        "argon2/wrkz"),
-#   endif
 
-#   ifdef XMRIG_ALGO_KAWPOW
-    ALGO_ALIAS_AUTO(KAWPOW_RVN),    ALGO_ALIAS(KAWPOW_RVN,      "kawpow/rvn"),
-#   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    ALGO_ALIAS_AUTO(GHOSTRIDER_RTM), ALGO_ALIAS(GHOSTRIDER_RTM, "ghostrider/rtm"),
-                                     ALGO_ALIAS(GHOSTRIDER_RTM, "gr"),
-#   endif
 };
 
 

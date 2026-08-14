@@ -100,12 +100,6 @@ bool xmrig::Rx::init(const T &seed, const RxConfig &config, const CpuConfig &cpu
 {
     const auto f = seed.algorithm().family();
     if ((f != Algorithm::RANDOM_X)
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        && (f != Algorithm::CN_HEAVY)
-#       endif
-#       ifdef XMRIG_ALGO_GHOSTRIDER
-        && (f != Algorithm::GHOSTRIDER)
-#       endif
         ) {
 #       ifdef XMRIG_FEATURE_MSR
         RxMsr::destroy();
@@ -120,17 +114,7 @@ bool xmrig::Rx::init(const T &seed, const RxConfig &config, const CpuConfig &cpu
     }
 #   endif
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    if (f == Algorithm::CN_HEAVY) {
-        return true;
-    }
-#   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    if (f == Algorithm::GHOSTRIDER) {
-        return true;
-    }
-#   endif
 
     randomx_set_scratchpad_prefetch_mode(config.scratchpadPrefetchMode());
     randomx_set_huge_pages_jit(cpu.isHugePagesJit());

@@ -66,10 +66,6 @@ public:
     virtual void handleRequest(IApiRequest &request)                    = 0;
 #   endif
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    virtual Benchmark *benchmark() const                                = 0;
-    virtual void printBenchProgress() const                             = 0;
-#   endif
 };
 
 

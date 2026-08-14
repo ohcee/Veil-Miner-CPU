@@ -45,9 +45,6 @@
 #endif
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-#   include "backend/common/benchmark/BenchState.h"
-#endif
 
 
 #include <algorithm>
@@ -115,11 +112,6 @@ void xmrig::Network::onActive(IStrategy *strategy, IClient *client)
 {
     const auto &pool = client->pool();
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    if (pool.mode() == Pool::MODE_BENCHMARK) {
-        return;
-    }
-#   endif
 
     char zmq_buf[32] = {};
     if (client->pool().zmq_port() >= 0) {
@@ -240,9 +232,6 @@ void xmrig::Network::onRequest(IApiRequest &request)
 
 void xmrig::Network::setJob(IClient *client, const Job &job)
 {
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    if (!BenchState::size())
-#   endif
     {
         uint64_t diff       = job.diff();
         const char *scale   = NetworkState::scaleDiff(diff);

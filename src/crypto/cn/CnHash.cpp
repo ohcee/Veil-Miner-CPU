@@ -30,9 +30,6 @@
 #endif
 
 
-#ifdef XMRIG_ALGO_ARGON2
-#   include "crypto/argon2/Hash.h"
-#endif
 
 
 #define ADD_FN(algo) do {                                                                            \
@@ -164,12 +161,6 @@ static void patchAsmVariants()
     cn_half_mainloop_bulldozer_asm              = reinterpret_cast<cn_mainloop_fun>         (base + 0x2000);
     cn_half_double_mainloop_sandybridge_asm     = reinterpret_cast<cn_mainloop_fun>         (base + 0x3000);
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    cn_trtl_mainloop_ivybridge_asm              = reinterpret_cast<cn_mainloop_fun>         (base + 0x4000);
-    cn_trtl_mainloop_ryzen_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x5000);
-    cn_trtl_mainloop_bulldozer_asm              = reinterpret_cast<cn_mainloop_fun>         (base + 0x6000);
-    cn_trtl_double_mainloop_sandybridge_asm     = reinterpret_cast<cn_mainloop_fun>         (base + 0x7000);
-#   endif
 
     cn_zls_mainloop_ivybridge_asm               = reinterpret_cast<cn_mainloop_fun>         (base + 0x8000);
     cn_zls_mainloop_ryzen_asm                   = reinterpret_cast<cn_mainloop_fun>         (base + 0x9000);
@@ -181,40 +172,8 @@ static void patchAsmVariants()
     cn_double_mainloop_bulldozer_asm            = reinterpret_cast<cn_mainloop_fun>         (base + 0xE000);
     cn_double_double_mainloop_sandybridge_asm   = reinterpret_cast<cn_mainloop_fun>         (base + 0xF000);
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    cn_tlo_mainloop_ivybridge_asm               = reinterpret_cast<cn_mainloop_fun>         (base + 0x10000);
-    cn_tlo_mainloop_ryzen_asm                   = reinterpret_cast<cn_mainloop_fun>         (base + 0x11000);
-    cn_tlo_mainloop_bulldozer_asm               = reinterpret_cast<cn_mainloop_fun>         (base + 0x12000);
-    cn_tlo_double_mainloop_sandybridge_asm      = reinterpret_cast<cn_mainloop_fun>         (base + 0x13000);
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    cn_upx2_mainloop_asm                        = reinterpret_cast<cn_mainloop_fun>         (base + 0x14000);
-    cn_upx2_double_mainloop_asm                 = reinterpret_cast<cn_mainloop_fun>         (base + 0x15000);
-#   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    cn_gr0_single_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x16000);
-    cn_gr1_single_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x16800);
-    cn_gr2_single_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x17000);
-    cn_gr3_single_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x17800);
-    cn_gr4_single_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x18000);
-    cn_gr5_single_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x18800);
-
-    cn_gr0_double_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x19000);
-    cn_gr1_double_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x19800);
-    cn_gr2_double_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x1A000);
-    cn_gr3_double_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x1A800);
-    cn_gr4_double_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x1B000);
-    cn_gr5_double_mainloop_asm                  = reinterpret_cast<cn_mainloop_fun>         (base + 0x1B800);
-
-    cn_gr0_quad_mainloop_asm                    = reinterpret_cast<cn_mainloop_fun>         (base + 0x1C000);
-    cn_gr1_quad_mainloop_asm                    = reinterpret_cast<cn_mainloop_fun>         (base + 0x1C800);
-    cn_gr2_quad_mainloop_asm                    = reinterpret_cast<cn_mainloop_fun>         (base + 0x1D000);
-    cn_gr3_quad_mainloop_asm                    = reinterpret_cast<cn_mainloop_fun>         (base + 0x1D800);
-    cn_gr4_quad_mainloop_asm                    = reinterpret_cast<cn_mainloop_fun>         (base + 0x1E000);
-    cn_gr5_quad_mainloop_asm                    = reinterpret_cast<cn_mainloop_fun>         (base + 0x1E800);
-#   endif
 
     {
         constexpr uint32_t ITER = CnAlgo<Algorithm::CN_HALF>().iterations();
@@ -225,27 +184,6 @@ static void patchAsmVariants()
         patchCode(cn_half_double_mainloop_sandybridge_asm,   cnv2_double_mainloop_sandybridge_asm,  ITER);
     }
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    {
-        constexpr uint32_t ITER = CnAlgo<Algorithm::CN_PICO_0>().iterations();
-        constexpr uint32_t MASK = CnAlgo<Algorithm::CN_PICO_0>().mask();
-
-        patchCode(cn_trtl_mainloop_ivybridge_asm,            cnv2_mainloop_ivybridge_asm,           ITER,   MASK);
-        patchCode(cn_trtl_mainloop_ryzen_asm,                cnv2_mainloop_ryzen_asm,               ITER,   MASK);
-        patchCode(cn_trtl_mainloop_bulldozer_asm,            cnv2_mainloop_bulldozer_asm,           ITER,   MASK);
-        patchCode(cn_trtl_double_mainloop_sandybridge_asm,   cnv2_double_mainloop_sandybridge_asm,  ITER,   MASK);
-    }
-
-    {
-        constexpr uint32_t ITER = CnAlgo<Algorithm::CN_PICO_TLO>().iterations();
-        constexpr uint32_t MASK = CnAlgo<Algorithm::CN_PICO_TLO>().mask();
-
-        patchCode(cn_tlo_mainloop_ivybridge_asm,             cnv2_mainloop_ivybridge_asm,           ITER,   MASK);
-        patchCode(cn_tlo_mainloop_ryzen_asm,                 cnv2_mainloop_ryzen_asm,               ITER,   MASK);
-        patchCode(cn_tlo_mainloop_bulldozer_asm,             cnv2_mainloop_bulldozer_asm,           ITER,   MASK);
-        patchCode(cn_tlo_double_mainloop_sandybridge_asm,    cnv2_double_mainloop_sandybridge_asm,  ITER,   MASK);
-    }
-#   endif
 
     {
         constexpr uint32_t ITER = CnAlgo<Algorithm::CN_ZLS>().iterations();
@@ -265,38 +203,7 @@ static void patchAsmVariants()
         patchCode(cn_double_double_mainloop_sandybridge_asm, cnv2_double_mainloop_sandybridge_asm,  ITER);
     }
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    {
-        constexpr uint32_t ITER = CnAlgo<Algorithm::CN_UPX2>().iterations();
-        constexpr uint32_t MASK = CnAlgo<Algorithm::CN_UPX2>().mask();
 
-        patchCode<Algorithm::CN_RWZ>(cn_upx2_mainloop_asm,        cnv2_rwz_mainloop_asm,            ITER,   MASK);
-        patchCode<Algorithm::CN_RWZ>(cn_upx2_double_mainloop_asm, cnv2_rwz_double_mainloop_asm,     ITER,   MASK);
-    }
-#   endif
-
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    patchCode<Algorithm::CN_1>(cn_gr0_single_mainloop_asm, cnv1_single_mainloop_asm, CnAlgo<Algorithm::CN_GR_0>().iterations(), CnAlgo<Algorithm::CN_GR_0>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr1_single_mainloop_asm, cnv1_single_mainloop_asm, CnAlgo<Algorithm::CN_GR_1>().iterations(), CnAlgo<Algorithm::CN_GR_1>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr2_single_mainloop_asm, cnv1_single_mainloop_asm, CnAlgo<Algorithm::CN_GR_2>().iterations(), CnAlgo<Algorithm::CN_GR_2>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr3_single_mainloop_asm, cnv1_single_mainloop_asm, CnAlgo<Algorithm::CN_GR_3>().iterations(), CnAlgo<Algorithm::CN_GR_3>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr4_single_mainloop_asm, cnv1_single_mainloop_asm, CnAlgo<Algorithm::CN_GR_4>().iterations(), CnAlgo<Algorithm::CN_GR_4>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr5_single_mainloop_asm, cnv1_single_mainloop_asm, CnAlgo<Algorithm::CN_GR_5>().iterations(), CnAlgo<Algorithm::CN_GR_5>().mask());
-
-    patchCode<Algorithm::CN_1>(cn_gr0_double_mainloop_asm, cnv1_double_mainloop_asm, CnAlgo<Algorithm::CN_GR_0>().iterations(), CnAlgo<Algorithm::CN_GR_0>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr1_double_mainloop_asm, cnv1_double_mainloop_asm, CnAlgo<Algorithm::CN_GR_1>().iterations(), CnAlgo<Algorithm::CN_GR_1>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr2_double_mainloop_asm, cnv1_double_mainloop_asm, CnAlgo<Algorithm::CN_GR_2>().iterations(), CnAlgo<Algorithm::CN_GR_2>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr3_double_mainloop_asm, cnv1_double_mainloop_asm, CnAlgo<Algorithm::CN_GR_3>().iterations(), CnAlgo<Algorithm::CN_GR_3>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr4_double_mainloop_asm, cnv1_double_mainloop_asm, CnAlgo<Algorithm::CN_GR_4>().iterations(), CnAlgo<Algorithm::CN_GR_4>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr5_double_mainloop_asm, cnv1_double_mainloop_asm, CnAlgo<Algorithm::CN_GR_5>().iterations(), CnAlgo<Algorithm::CN_GR_5>().mask());
-
-    patchCode<Algorithm::CN_1>(cn_gr0_quad_mainloop_asm, cnv1_quad_mainloop_asm, CnAlgo<Algorithm::CN_GR_0>().iterations(), CnAlgo<Algorithm::CN_GR_0>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr1_quad_mainloop_asm, cnv1_quad_mainloop_asm, CnAlgo<Algorithm::CN_GR_1>().iterations(), CnAlgo<Algorithm::CN_GR_1>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr2_quad_mainloop_asm, cnv1_quad_mainloop_asm, CnAlgo<Algorithm::CN_GR_2>().iterations(), CnAlgo<Algorithm::CN_GR_2>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr3_quad_mainloop_asm, cnv1_quad_mainloop_asm, CnAlgo<Algorithm::CN_GR_3>().iterations(), CnAlgo<Algorithm::CN_GR_3>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr4_quad_mainloop_asm, cnv1_quad_mainloop_asm, CnAlgo<Algorithm::CN_GR_4>().iterations(), CnAlgo<Algorithm::CN_GR_4>().mask());
-    patchCode<Algorithm::CN_1>(cn_gr5_quad_mainloop_asm, cnv1_quad_mainloop_asm, CnAlgo<Algorithm::CN_GR_5>().iterations(), CnAlgo<Algorithm::CN_GR_5>().mask());
-#   endif
 
     VirtualMemory::protectRX(base, allocation_size);
     VirtualMemory::flushInstructionCache(base, allocation_size);
@@ -331,53 +238,13 @@ xmrig::CnHash::CnHash()
     ADD_FN_ASM(Algorithm::CN_ZLS);
     ADD_FN_ASM(Algorithm::CN_DOUBLE);
 
-#   ifdef XMRIG_ALGO_CN_LITE
-    ADD_FN(Algorithm::CN_LITE_0);
-    ADD_FN(Algorithm::CN_LITE_1);
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    ADD_FN(Algorithm::CN_HEAVY_0);
-    ADD_FN(Algorithm::CN_HEAVY_TUBE);
-    ADD_FN(Algorithm::CN_HEAVY_XHV);
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    ADD_FN(Algorithm::CN_PICO_0);
-    ADD_FN_ASM(Algorithm::CN_PICO_0);
-    ADD_FN(Algorithm::CN_PICO_TLO);
-    ADD_FN_ASM(Algorithm::CN_PICO_TLO);
-#   endif
 
     ADD_FN(Algorithm::CN_CCX);
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    ADD_FN(Algorithm::CN_UPX2);
-    ADD_FN_ASM(Algorithm::CN_UPX2);
-#   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    m_map[Algorithm::AR2_CHUKWA] = new cn_hash_fun_array{};
-    m_map[Algorithm::AR2_CHUKWA]->data[AV_SINGLE][Assembly::NONE]         = argon2::single_hash<Algorithm::AR2_CHUKWA>;
-    m_map[Algorithm::AR2_CHUKWA]->data[AV_SINGLE_SOFT][Assembly::NONE]    = argon2::single_hash<Algorithm::AR2_CHUKWA>;
 
-    m_map[Algorithm::AR2_CHUKWA_V2] = new cn_hash_fun_array{};
-    m_map[Algorithm::AR2_CHUKWA_V2]->data[AV_SINGLE][Assembly::NONE]      = argon2::single_hash<Algorithm::AR2_CHUKWA_V2>;
-    m_map[Algorithm::AR2_CHUKWA_V2]->data[AV_SINGLE_SOFT][Assembly::NONE] = argon2::single_hash<Algorithm::AR2_CHUKWA_V2>;
-
-    m_map[Algorithm::AR2_WRKZ] = new cn_hash_fun_array{};
-    m_map[Algorithm::AR2_WRKZ]->data[AV_SINGLE][Assembly::NONE]           = argon2::single_hash<Algorithm::AR2_WRKZ>;
-    m_map[Algorithm::AR2_WRKZ]->data[AV_SINGLE_SOFT][Assembly::NONE]      = argon2::single_hash<Algorithm::AR2_WRKZ>;
-#   endif
-
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    ADD_FN(Algorithm::CN_GR_0);
-    ADD_FN(Algorithm::CN_GR_1);
-    ADD_FN(Algorithm::CN_GR_2);
-    ADD_FN(Algorithm::CN_GR_3);
-    ADD_FN(Algorithm::CN_GR_4);
-    ADD_FN(Algorithm::CN_GR_5);
-#   endif
 
 #   ifdef XMRIG_FEATURE_ASM
     patchAsmVariants();
@@ -406,28 +273,6 @@ xmrig::cn_hash_fun xmrig::CnHash::fn(const Algorithm &algorithm, AlgoVariant av,
         return nullptr;
     }
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    // cn-heavy optimization for Zen3/Zen4 CPUs
-    const auto arch = Cpu::info()->arch();
-    const uint32_t model = Cpu::info()->model();
-    const bool is_vermeer = (arch == ICpuInfo::ARCH_ZEN3) && (model == 0x21);
-    const bool is_raphael = (arch == ICpuInfo::ARCH_ZEN4) && (model == 0x61);
-    if ((av == AV_SINGLE) && (assembly != Assembly::NONE) && (is_vermeer || is_raphael)) {
-        switch (algorithm.id()) {
-        case Algorithm::CN_HEAVY_0:
-            return cryptonight_single_hash<Algorithm::CN_HEAVY_0, false, 3>;
-
-        case Algorithm::CN_HEAVY_TUBE:
-            return cryptonight_single_hash<Algorithm::CN_HEAVY_TUBE, false, 3>;
-
-        case Algorithm::CN_HEAVY_XHV:
-            return cryptonight_single_hash<Algorithm::CN_HEAVY_XHV, false, 3>;
-
-        default:
-            break;
-        }
-    }
-#   endif
 
 #   ifdef XMRIG_FEATURE_ASM
     cn_hash_fun fun = it->second->data[av][Cpu::assembly(assembly)];

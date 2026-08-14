@@ -49,11 +49,7 @@ public:
 
     Pools();
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    inline bool isBenchmark() const                     { return !!m_benchmark; }
-#   else
     inline constexpr static bool isBenchmark()          { return false; }
-#   endif
 
     inline const std::vector<Pool> &data() const        { return m_data; }
     inline int retries() const                          { return m_retries; }
@@ -79,9 +75,6 @@ private:
     int m_retryPause            = 5;
     std::vector<Pool> m_data;
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    std::shared_ptr<BenchConfig> m_benchmark;
-#   endif
 };
 
 

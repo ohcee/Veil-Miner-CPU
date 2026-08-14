@@ -40,10 +40,6 @@
 #endif
 
 
-#ifdef XMRIG_ALGO_KAWPOW
-#   include "crypto/kawpow/KPCache.h"
-#   include "crypto/kawpow/KPHash.h"
-#endif
 
 
 

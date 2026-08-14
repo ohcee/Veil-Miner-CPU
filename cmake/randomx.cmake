@@ -14,7 +14,6 @@ if (WITH_RANDOMX)
     endif()
 
     add_definitions(/DXMRIG_ALGO_RANDOMX)
-    set(WITH_ARGON2 ON)
 
     list(APPEND HEADERS_CRYPTO
         src/crypto/rx/Rx.h

@@ -30,9 +30,6 @@
 #endif
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-#   include "base/net/stratum/benchmark/BenchConfig.h"
-#endif
 
 
 namespace xmrig
@@ -103,9 +100,6 @@ void xmrig::ConfigTransform::finalize(rapidjson::Document &doc)
         profile.AddMember(StringRef(kThreads),   m_threads, allocator);
         profile.AddMember(StringRef(kAffinity),  m_affinity, allocator);
 
-#       ifdef XMRIG_ALGO_KAWPOW
-        doc[CpuConfig::kField].AddMember(StringRef(Algorithm::kKAWPOW), false, doc.GetAllocator());
-#       endif
         doc[CpuConfig::kField].AddMember(StringRef(kAsterisk), profile, doc.GetAllocator());
     }
 
@@ -148,10 +142,6 @@ void xmrig::ConfigTransform::transform(rapidjson::Document &doc, int key, const 
     case IConfig::PauseOnActiveKey: /* --pause-on-active */
         return set(doc, Config::kPauseOnActive, static_cast<uint64_t>(strtol(arg, nullptr, 10)));
 
-#   ifdef XMRIG_ALGO_ARGON2
-    case IConfig::Argon2ImplKey: /* --argon2-impl */
-        return set(doc, CpuConfig::kField, CpuConfig::kArgon2Impl, arg);
-#   endif
 
 #   ifdef XMRIG_FEATURE_ASM
     case IConfig::AssemblyKey: /* --asm */
@@ -199,19 +189,6 @@ void xmrig::ConfigTransform::transform(rapidjson::Document &doc, int key, const 
         return set(doc, Config::kDMI, false);
 #   endif
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    case IConfig::AlgorithmKey:     /* --algo */
-    case IConfig::BenchKey:         /* --bench */
-    case IConfig::StressKey:        /* --stress */
-    case IConfig::BenchSubmitKey:   /* --submit */
-    case IConfig::BenchVerifyKey:   /* --verify */
-    case IConfig::BenchTokenKey:    /* --token */
-    case IConfig::BenchSeedKey:     /* --seed */
-    case IConfig::BenchHashKey:     /* --hash */
-    case IConfig::UserKey:          /* --user */
-    case IConfig::RotationKey:      /* --rotation */
-        return transformBenchmark(doc, key, arg);
-#   endif
 
     default:
         break;
@@ -264,49 +241,4 @@ void xmrig::ConfigTransform::transformUint64(rapidjson::Document &doc, int key, 
 }
 
 
-#ifdef XMRIG_FEATURE_BENCHMARK
-void xmrig::ConfigTransform::transformBenchmark(rapidjson::Document &doc, int key, const char *arg)
-{
-    switch (key) {
-    case IConfig::AlgorithmKey: /* --algo */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kAlgo, arg);
-
-    case IConfig::BenchKey: /* --bench */
-    {
-        // CPU settings for the benchmark
-        set(doc, CpuConfig::kField, CpuConfig::kHugePagesJit, true);
-        set(doc, CpuConfig::kField, CpuConfig::kPriority, 2);
-        set(doc, CpuConfig::kField, CpuConfig::kYield, false);
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kSize, arg);
-    }
-
-    case IConfig::StressKey: /* --stress */
-        return add(doc, Pools::kPools, Pool::kUser, BenchConfig::kBenchmark);
-
-    case IConfig::BenchSubmitKey: /* --submit */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kSubmit, true);
-
-    case IConfig::BenchVerifyKey: /* --verify */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kVerify, arg);
-
-    case IConfig::BenchTokenKey: /* --token */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kToken, arg);
-
-    case IConfig::BenchSeedKey: /* --seed */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kSeed, arg);
-
-    case IConfig::BenchHashKey: /* --hash */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kHash, arg);
-
-    case IConfig::UserKey: /* --user */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kUser, arg);
-
-    case IConfig::RotationKey: /* --rotation */
-        return set(doc, BenchConfig::kBenchmark, BenchConfig::kRotation, arg);
-
-    default:
-        break;
-    }
-}
-#endif
 

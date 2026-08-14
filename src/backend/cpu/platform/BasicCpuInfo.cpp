@@ -162,19 +162,6 @@ static inline bool is_vm()          { return has_feature(PROCESSOR_INFO,        
 } // namespace xmrig
 
 
-#ifdef XMRIG_ALGO_ARGON2
-extern "C" {
-
-
-int cpu_flags_has_avx2()    { return xmrig::has_avx2(); }
-int cpu_flags_has_avx512f() { return xmrig::has_avx512f(); }
-int cpu_flags_has_sse2()    { return xmrig::has_sse2(); }
-int cpu_flags_has_ssse3()   { return xmrig::has_ssse3(); }
-int cpu_flags_has_xop()     { return xmrig::has_xop(); }
-
-
-}
-#endif
 
 
 xmrig::BasicCpuInfo::BasicCpuInfo() :
@@ -333,29 +320,9 @@ xmrig::CpuThreads xmrig::BasicCpuInfo::threads(const Algorithm &algorithm, uint3
 
     const auto f = algorithm.family();
 
-#   ifdef XMRIG_ALGO_CN_LITE
-    if (f == Algorithm::CN_LITE) {
-        return CpuThreads(count, 1);
-    }
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_PICO
-    if (f == Algorithm::CN_PICO) {
-        return CpuThreads(count, 2);
-    }
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_FEMTO
-    if (f == Algorithm::CN_FEMTO) {
-        return CpuThreads(count, 2);
-    }
-#   endif
 
-#   ifdef XMRIG_ALGO_CN_HEAVY
-    if (f == Algorithm::CN_HEAVY) {
-        return CpuThreads(std::max<size_t>(count / 4, 1), 1);
-    }
-#   endif
 
 #   ifdef XMRIG_ALGO_RANDOMX
     if (f == Algorithm::RANDOM_X) {
@@ -367,17 +334,7 @@ xmrig::CpuThreads xmrig::BasicCpuInfo::threads(const Algorithm &algorithm, uint3
     }
 #   endif
 
-#   ifdef XMRIG_ALGO_ARGON2
-    if (f == Algorithm::ARGON2) {
-        return count;
-    }
-#   endif
 
-#   ifdef XMRIG_ALGO_GHOSTRIDER
-    if (f == Algorithm::GHOSTRIDER) {
-        return CpuThreads(std::max<size_t>(count / 2, 1), 8);
-    }
-#   endif
 
     return CpuThreads(std::max<size_t>(count / 2, 1), 1);
 }

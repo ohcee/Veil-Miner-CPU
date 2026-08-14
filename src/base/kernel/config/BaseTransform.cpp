@@ -143,7 +143,6 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
         break;
 
     case IConfig::UrlKey:    /* --url */
-    case IConfig::StressKey: /* --stress */
     {
         if (!doc.HasMember(Pools::kPools)) {
             doc.AddMember(rapidjson::StringRef(Pools::kPools), rapidjson::kArrayType, doc.GetAllocator());
@@ -154,17 +153,6 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
             array.PushBack(rapidjson::kObjectType, doc.GetAllocator());
         }
 
-#       ifdef XMRIG_FEATURE_BENCHMARK
-        if (key != IConfig::UrlKey) {
-            set(doc, array[array.Size() - 1], Pool::kUrl,
-#           ifdef XMRIG_FEATURE_TLS
-                "stratum+ssl://randomx.xmrig.com:443"
-#           else
-                "randomx.xmrig.com:3333"
-#           endif
-            );
-        } else
-#       endif
         {
             set(doc, array[array.Size() - 1], Pool::kUrl, arg);
         }

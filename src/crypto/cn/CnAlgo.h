@@ -57,15 +57,6 @@ public:
 
         case Algorithm::CN_FAST:
         case Algorithm::CN_HALF:
-#       ifdef XMRIG_ALGO_CN_LITE
-        case Algorithm::CN_LITE_0:
-        case Algorithm::CN_LITE_1:
-#       endif
-#       ifdef XMRIG_ALGO_CN_HEAVY
-        case Algorithm::CN_HEAVY_0:
-        case Algorithm::CN_HEAVY_TUBE:
-        case Algorithm::CN_HEAVY_XHV:
-#       endif
         case Algorithm::CN_CCX:
             return CN_ITER / 2;
 
@@ -77,16 +68,7 @@ public:
         case Algorithm::CN_DOUBLE:
             return CN_ITER * 2;
 
-#       ifdef XMRIG_ALGO_CN_PICO
-        case Algorithm::CN_PICO_0:
-        case Algorithm::CN_PICO_TLO:
-            return CN_ITER / 8;
-#       endif
 
-#       ifdef XMRIG_ALGO_CN_FEMTO
-        case Algorithm::CN_UPX2:
-            return CN_ITER / 32;
-#       endif
 
         default:
             break;
@@ -97,27 +79,8 @@ public:
 
     inline static uint32_t mask(Algorithm::Id algo)
     {
-#       ifdef XMRIG_ALGO_CN_PICO
-        if (algo == Algorithm::CN_PICO_0) {
-            return 0x1FFF0;
-        }
-#       endif
 
-#       ifdef XMRIG_ALGO_CN_FEMTO
-        if (algo == Algorithm::CN_UPX2) {
-            return 0x1FFF0;
-        }
-#       endif
 
-#       ifdef XMRIG_ALGO_GHOSTRIDER
-        if (algo == Algorithm::CN_GR_1) {
-            return 0x3FFF0;
-        }
-
-        if (algo == Algorithm::CN_GR_5) {
-            return 0x1FFF0;
-        }
-#       endif
 
         return ((Algorithm::l3(algo) - 1) / 16) * 16;
     }
@@ -147,17 +110,6 @@ template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_UPX2>::iterations() co
 template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_PICO_0>::mask() const             { return 0x1FFF0; }
 template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_UPX2>::mask() const               { return 0x1FFF0; }
 
-#ifdef XMRIG_ALGO_GHOSTRIDER
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_0>::iterations() const         { return CN_ITER / 4; }
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_1>::iterations() const         { return CN_ITER / 4; }
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_2>::iterations() const         { return CN_ITER / 2; }
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_3>::iterations() const         { return CN_ITER / 2; }
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_4>::iterations() const         { return CN_ITER / 8; }
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_5>::iterations() const         { return CN_ITER / 8; }
-
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_1>::mask() const               { return 0x3FFF0; }
-template<> constexpr inline uint32_t CnAlgo<Algorithm::CN_GR_5>::mask() const               { return 0x1FFF0; }
-#endif
 
 
 } /* namespace xmrig */

@@ -92,10 +92,6 @@ static inline const std::string &usage()
 #   endif
     u += "      --asm=ASM                 ASM optimizations, possible values: auto, none, intel, ryzen, bulldozer\n";
 
-#   if defined(__x86_64__) || defined(_M_AMD64)
-    u += "      --argon2-impl=IMPL        argon2 implementation: x86_64, SSE2, SSSE3, XOP, AVX2, AVX-512F\n";
-#   endif
-
 #   ifdef XMRIG_ALGO_RANDOMX
     u += "      --randomx-init=N          threads count to initialize RandomX dataset\n";
     u += "      --randomx-no-numa         disable NUMA support for RandomX\n";
@@ -159,16 +155,6 @@ static inline const std::string &usage()
     u += "      --pause-on-battery        pause mine on battery power\n";
     u += "      --pause-on-active=N       pause mine when the user is active (resume after N seconds of last activity)\n";
 
-#   ifdef XMRIG_FEATURE_BENCHMARK
-    u += "      --stress                  run continuous stress test to check system stability\n";
-    u += "      --bench=N                 run benchmark, N can be between 1M and 10M\n";
-#   ifdef XMRIG_FEATURE_HTTP
-    u += "      --submit                  perform an online benchmark and submit result for sharing\n";
-    u += "      --verify=ID               verify submitted benchmark by ID\n";
-#   endif
-    u += "      --seed=SEED               custom RandomX seed for benchmark\n";
-    u += "      --hash=HASH               compare benchmark result with specified hash\n";
-#   endif
 
 #   ifdef XMRIG_FEATURE_DMI
     u += "      --no-dmi                  disable DMI/SMBIOS reader\n";

@@ -34,10 +34,7 @@
         "memory-pool": false,
         "yield": true,
         "max-threads-hint": 100,
-        "asm": true,
-        "argon2-impl": null,
-        "cn/0": false,
-        "cn-lite/0": false
+        "asm": true
     },
     "log-file": null,
     "pools": [
