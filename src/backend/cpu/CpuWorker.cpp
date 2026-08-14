@@ -28,9 +28,6 @@
 #include "base/tools/bswap_64.h"
 #include "core/config/Config.h"
 #include "core/Miner.h"
-#include "crypto/cn/CnCtx.h"
-#include "crypto/cn/CryptoNight_test.h"
-#include "crypto/cn/CryptoNight.h"
 #include "crypto/common/Nonce.h"
 #include "crypto/common/VirtualMemory.h"
 #include "crypto/rx/Rx.h"
@@ -64,10 +61,8 @@ xmrig::CpuWorker<N>::CpuWorker(size_t id, const CpuLaunchData &data) :
     m_assembly(data.assembly),
     m_hwAES(data.hwAES),
     m_yield(data.yield),
-    m_av(data.av()),
     m_miner(data.miner),
-    m_threads(data.threads),
-    m_ctx()
+    m_threads(data.threads)
 {
     {
         m_memory = new VirtualMemory(m_algorithm.l3() * N, data.hugePages, false, true, node(), VirtualMemory::kDefaultHugePageSize);
@@ -82,8 +77,6 @@ xmrig::CpuWorker<N>::~CpuWorker()
 #   ifdef XMRIG_ALGO_RANDOMX
     RxVm::destroy(m_vm);
 #   endif
-
-    CnCtx::release(m_ctx, N);
 
     {
         delete m_memory;
@@ -130,31 +123,6 @@ bool xmrig::CpuWorker<N>::selfTest()
         return N == 1;
     }
 #   endif
-
-    allocateCnCtx();
-
-
-    if (m_algorithm.family() == Algorithm::CN) {
-        const bool rc = verify(Algorithm::CN_0,      test_output_v0)   &&
-                        verify(Algorithm::CN_1,      test_output_v1)   &&
-                        verify(Algorithm::CN_2,      test_output_v2)   &&
-                        verify(Algorithm::CN_FAST,   test_output_msr)  &&
-                        verify(Algorithm::CN_XAO,    test_output_xao)  &&
-                        verify(Algorithm::CN_RTO,    test_output_rto)  &&
-                        verify(Algorithm::CN_HALF,   test_output_half) &&
-                        verify2(Algorithm::CN_R,     test_output_r)    &&
-                        verify(Algorithm::CN_RWZ,    test_output_rwz)  &&
-                        verify(Algorithm::CN_ZLS,    test_output_zls)  &&
-                        verify(Algorithm::CN_CCX,    test_output_ccx)  &&
-                        verify(Algorithm::CN_DOUBLE, test_output_double);
-
-        return rc;
-    }
-
-
-
-
-
 
     return false;
 }
@@ -205,12 +173,7 @@ void xmrig::CpuWorker<N>::start()
             }
 
 
-            bool valid = true;
-
-            uint8_t miner_signature_saved[64];
-
 #           ifdef XMRIG_ALGO_RANDOMX
-            uint8_t* miner_signature_ptr = m_job.blob() + m_job.nonceOffset() + m_job.nonceSize();
             if (job.algorithm().id() == Algorithm::RX_VEIL) {
                 if (first) {
                     RxVeil::initJob(job.blob(), job.size(), m_job.nonceOffset(),
@@ -222,72 +185,21 @@ void xmrig::CpuWorker<N>::start()
                 }
                 RxVeil::hashStep(m_job.blob(), job.size(), m_job.nonceOffset(),
                                  sha256_ctx_cache, dsha256, m_vm, tempHash, m_hash);
-            }
-            else if (job.algorithm().family() == Algorithm::RANDOM_X) {
-                if (first) {
-                    first = false;
-                    if (job.hasMinerSignature()) {
-                        job.generateMinerSignature(m_job.blob(), job.size(), miner_signature_ptr);
-                    }
-                    randomx_calculate_hash_first(m_vm, tempHash, m_job.blob(), job.size());
+
+                const uint64_t value = RxVeil::difficultyValue(m_hash);
+
+                if (value < job.target()) {
+                    JobResults::submit(job, current_job_nonces[0], m_hash);
                 }
 
-                if (!nextRound()) {
-                    break;
-                }
-
-                if (job.hasMinerSignature()) {
-                    memcpy(miner_signature_saved, miner_signature_ptr, sizeof(miner_signature_saved));
-                    job.generateMinerSignature(m_job.blob(), job.size(), miner_signature_ptr);
-                }
-                randomx_calculate_hash_next(m_vm, tempHash, m_job.blob(), job.size(), m_hash);
+                m_count += N;
             }
             else
 #           endif
             {
-                switch (job.algorithm().family()) {
-
-
-                default:
-                    fn(job.algorithm())(m_job.blob(), job.size(), m_hash, m_ctx, job.height());
-                    break;
-                }
-
                 if (!nextRound()) {
                     break;
-                };
-            }
-
-            if (valid) {
-                if (job.algorithm().id() == Algorithm::RX_VEIL) {
-                    const uint64_t value = RxVeil::difficultyValue(m_hash);
-
-                    if (value < job.target()) {
-                        JobResults::submit(job, current_job_nonces[0], m_hash, nullptr);
-                    }
                 }
-                else {
-                    if (!job.hasMinerSignature()) {
-                        for (size_t i = 0; i < N; ++i) {
-                            const uint64_t value = *reinterpret_cast<uint64_t*>(m_hash + (i * 32) + 24);
-
-                            if (value < job.target()) {
-                                JobResults::submit(job, current_job_nonces[0], m_hash, nullptr);
-                            }
-                        }
-                    }
-                    else {
-                        for (size_t i = 0; i < N; ++i) {
-                            const uint64_t value = *reinterpret_cast<uint64_t*>(m_hash + (i * 32) + 24);
-
-                            if (value < job.target()) {
-                                JobResults::submit(job, current_job_nonces[0], m_hash + (i * 32), miner_signature_saved);
-                            }
-                        }
-                    }
-                }
-
-                m_count += N;
             }
 
 
@@ -319,83 +231,6 @@ bool xmrig::CpuWorker<N>::nextRound()
 
 
 template<size_t N>
-bool xmrig::CpuWorker<N>::verify(const Algorithm &algorithm, const uint8_t *referenceValue)
-{
-
-    cn_hash_fun func = fn(algorithm);
-    if (!func) {
-        return false;
-    }
-
-    func(test_input, 76, m_hash, m_ctx, 0);
-    return memcmp(m_hash, referenceValue, sizeof m_hash) == 0;
-}
-
-
-template<size_t N>
-bool xmrig::CpuWorker<N>::verify2(const Algorithm &algorithm, const uint8_t *referenceValue)
-{
-    cn_hash_fun func = fn(algorithm);
-    if (!func) {
-        return false;
-    }
-
-    for (size_t i = 0; i < (sizeof(cn_r_test_input) / sizeof(cn_r_test_input[0])); ++i) {
-        const size_t size = cn_r_test_input[i].size;
-        for (size_t k = 0; k < N; ++k) {
-            memcpy(m_job.blob() + (k * size), cn_r_test_input[i].data, size);
-        }
-
-        func(m_job.blob(), size, m_hash, m_ctx, cn_r_test_input[i].height);
-
-        for (size_t k = 0; k < N; ++k) {
-            if (memcmp(m_hash + k * 32, referenceValue + i * 32, sizeof m_hash / N) != 0) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-}
-
-
-namespace xmrig {
-
-template<>
-bool CpuWorker<1>::verify2(const Algorithm &algorithm, const uint8_t *referenceValue)
-{
-    cn_hash_fun func = fn(algorithm);
-    if (!func) {
-        return false;
-    }
-
-    for (size_t i = 0; i < (sizeof(cn_r_test_input) / sizeof(cn_r_test_input[0])); ++i) {
-        func(cn_r_test_input[i].data, cn_r_test_input[i].size, m_hash, m_ctx, cn_r_test_input[i].height);
-
-        if (memcmp(m_hash, referenceValue + i * 32, sizeof m_hash) != 0) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-} // namespace xmrig
-
-
-template<size_t N>
-void xmrig::CpuWorker<N>::allocateCnCtx()
-{
-    if (m_ctx[0] == nullptr) {
-        int shift = 0;
-
-
-        CnCtx::create(m_ctx, m_memory->scratchpad() + shift, m_algorithm.l3(), N);
-    }
-}
-
-
-template<size_t N>
 void xmrig::CpuWorker<N>::consumeJob()
 {
     if (Nonce::sequence(Nonce::CPU) == 0) {
@@ -412,11 +247,7 @@ void xmrig::CpuWorker<N>::consumeJob()
     if (m_job.currentJob().algorithm().family() == Algorithm::RANDOM_X) {
         allocateRandomX_VM();
     }
-    else
 #   endif
-    {
-        allocateCnCtx();
-    }
 }
 
 

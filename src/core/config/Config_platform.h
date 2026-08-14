@@ -31,7 +31,7 @@
 namespace xmrig {
 
 
-static const char short_options[] = "a:c:kBp:Px:r:R:s:t:T:o:u:O:v:l:Sx:46";
+static const char short_options[] = "a:c:kBp:Px:r:R:s:t:T:o:u:O:l:Sx:46";
 
 
 static const option options[] = {
@@ -45,14 +45,7 @@ static const option options[] = {
     { "http-access-token",     1, nullptr, IConfig::HttpAccessTokenKey    },
     { "http-port",             1, nullptr, IConfig::HttpPort              },
     { "http-no-restricted",    0, nullptr, IConfig::HttpRestrictedKey     },
-    { "daemon",                0, nullptr, IConfig::DaemonKey             },
-    { "daemon-poll-interval",  1, nullptr, IConfig::DaemonPollKey         },
-    { "daemon-job-timeout",    1, nullptr, IConfig::DaemonJobTimeoutKey   },
-    { "self-select",           1, nullptr, IConfig::SelfSelectKey         },
-    { "submit-to-origin",      0, nullptr, IConfig::SubmitToOriginKey     },
-    { "daemon-zmq-port",       1, nullptr, IConfig::DaemonZMQPortKey      },
 #   endif
-    { "av",                    1, nullptr, IConfig::AVKey                 },
     { "background",            0, nullptr, IConfig::BackgroundKey         },
     { "config",                1, nullptr, IConfig::ConfigKey             },
     { "cpu-affinity",          1, nullptr, IConfig::CPUAffinityKey        },
@@ -94,7 +87,6 @@ static const option options[] = {
     { "ipv4",                  0, nullptr, IConfig::DnsIPv4Key            },
     { "ipv6",                  0, nullptr, IConfig::DnsIPv6Key            },
     { "dns-ttl",               1, nullptr, IConfig::DnsTtlKey             },
-    { "spend-secret-key",      1, nullptr, IConfig::SpendSecretKey        },
 #   ifdef XMRIG_FEATURE_TLS
     { "tls",                   0, nullptr, IConfig::TlsKey                },
     { "tls-fingerprint",       1, nullptr, IConfig::FingerprintKey        },

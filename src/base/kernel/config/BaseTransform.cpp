@@ -165,17 +165,11 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
     case IConfig::PasswordKey: /* --pass */
         return add(doc, Pools::kPools, Pool::kPass, arg);
 
-    case IConfig::SpendSecretKey: /* --spend-secret-key */
-        return add(doc, Pools::kPools, Pool::kSpendSecretKey, arg);
-
     case IConfig::RigIdKey: /* --rig-id */
         return add(doc, Pools::kPools, Pool::kRigId, arg);
 
     case IConfig::FingerprintKey: /* --tls-fingerprint */
         return add(doc, Pools::kPools, Pool::kFingerprint, arg);
-
-    case IConfig::SelfSelectKey: /* --self-select */
-        return add(doc, Pools::kPools, Pool::kSelfSelect, arg);
 
     case IConfig::ProxyKey: /* --proxy */
         return add(doc, Pools::kPools, Pool::kSOCKS5, arg);
@@ -230,10 +224,7 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
     case IConfig::RetryPauseKey:    /* --retry-pause */
     case IConfig::PrintTimeKey:     /* --print-time */
     case IConfig::HttpPort:         /* --http-port */
-    case IConfig::DaemonPollKey:    /* --daemon-poll-interval */
-    case IConfig::DaemonJobTimeoutKey: /* --daemon-job-timeout */
     case IConfig::DnsTtlKey:        /* --dns-ttl */
-    case IConfig::DaemonZMQPortKey: /* --daemon-zmq-port */
         return transformUint64(doc, key, static_cast<uint64_t>(strtol(arg, nullptr, 10)));
 
     case IConfig::BackgroundKey:  /* --background */
@@ -243,8 +234,6 @@ void xmrig::BaseTransform::transform(rapidjson::Document &doc, int key, const ch
     case IConfig::TlsKey:         /* --tls */
     case IConfig::DryRunKey:      /* --dry-run */
     case IConfig::HttpEnabledKey: /* --http-enabled */
-    case IConfig::DaemonKey:      /* --daemon */
-    case IConfig::SubmitToOriginKey: /* --submit-to-origin */
     case IConfig::VerboseKey:     /* --verbose */
     case IConfig::DnsIPv4Key:     /* --ipv4 */
     case IConfig::DnsIPv6Key:     /* --ipv6 */
@@ -275,13 +264,6 @@ void xmrig::BaseTransform::transformBoolean(rapidjson::Document &doc, int key, b
 
     case IConfig::TlsKey: /* --tls */
         return add(doc, Pools::kPools, Pool::kTls, enable);
-
-    case IConfig::SubmitToOriginKey: /* --submit-to-origin */
-        return add(doc, Pools::kPools, Pool::kSubmitToOrigin, enable);
-#   ifdef XMRIG_FEATURE_HTTP
-    case IConfig::DaemonKey: /* --daemon */
-        return add(doc, Pools::kPools, Pool::kDaemon, enable);
-#   endif
 
 #   ifndef XMRIG_PROXY_PROJECT
     case IConfig::NicehashKey: /* --nicehash */
@@ -340,14 +322,6 @@ void xmrig::BaseTransform::transformUint64(rapidjson::Document &doc, int key, ui
         return set(doc, DnsConfig::kField, DnsConfig::kTTL, arg);
 
 #   ifdef XMRIG_FEATURE_HTTP
-    case IConfig::DaemonPollKey:  /* --daemon-poll-interval */
-        return add(doc, Pools::kPools, Pool::kDaemonPollInterval, arg);
-
-    case IConfig::DaemonJobTimeoutKey:  /* --daemon-job-timeout */
-        return add(doc, Pools::kPools, Pool::kDaemonJobTimeout, arg);
-
-    case IConfig::DaemonZMQPortKey:  /* --daemon-zmq-port */
-        return add(doc, Pools::kPools, Pool::kDaemonZMQPort, arg);
 #   endif
 
     default:

@@ -32,16 +32,7 @@ class Coin
 public:
     enum Id : uint32_t {
         INVALID,
-        MONERO,
-        SUMO,
-        ARQMA,
-        GRAFT,
-        RAVEN,
-        WOWNERO,
         VEIL,
-        ZEPHYR,
-        TOWNFORGE,
-        YADA,
         MAX
     };
 

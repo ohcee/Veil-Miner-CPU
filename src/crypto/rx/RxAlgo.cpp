@@ -31,33 +31,15 @@ xmrig::Algorithm::Id xmrig::RxAlgo::apply(Algorithm::Id algorithm)
 
 const RandomX_ConfigurationBase *xmrig::RxAlgo::base(Algorithm::Id algorithm)
 {
-    switch (algorithm) {
-    case Algorithm::RX_WOW:
-        return &RandomX_WowneroConfig;
-
-    case Algorithm::RX_ARQ:
-        return &RandomX_ArqmaConfig;
-
-    case Algorithm::RX_GRAFT:
-        return &RandomX_GraftConfig;
-
-    case Algorithm::RX_SFX:
-        return &RandomX_SafexConfig;
-
-    case Algorithm::RX_YADA:
-        return &RandomX_YadaConfig;
-
-    default:
-        break;
-    }
-
+    // Veil uses the reference RandomX configuration; the chain-specific part
+    // is the sha256d header transform handled in RxVeil.
     return &RandomX_MoneroConfig;
 }
 
 
 uint32_t xmrig::RxAlgo::version(Algorithm::Id algorithm)
 {
-    return algorithm == Algorithm::RX_WOW ? 103 : 104;
+    return 104;
 }
 
 

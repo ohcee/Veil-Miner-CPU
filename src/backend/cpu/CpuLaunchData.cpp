@@ -61,16 +61,6 @@ bool xmrig::CpuLaunchData::isEqual(const CpuLaunchData &other) const
 }
 
 
-xmrig::CnHash::AlgoVariant xmrig::CpuLaunchData::av() const
-{
-    if (intensity <= 2) {
-        return static_cast<CnHash::AlgoVariant>(!hwAES ? (intensity + 2) : intensity);
-    }
-
-    return static_cast<CnHash::AlgoVariant>(!hwAES ? (intensity + 5) : (intensity + 2));
-}
-
-
 const char *xmrig::CpuLaunchData::tag()
 {
     return cpu_tag();

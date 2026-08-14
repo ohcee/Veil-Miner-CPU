@@ -60,15 +60,6 @@ static inline const std::string &usage()
     u += "  -6, --ipv6                    resolve names to IPv6 addresses\n";
     u += "      --dns-ttl=N               N seconds (default: 30) TTL for internal DNS cache\n";
 
-#   ifdef XMRIG_FEATURE_HTTP
-    u += "      --daemon                  use daemon RPC instead of pool for solo mining\n";
-    u += "      --daemon-zmq-port=N       daemon's zmq-pub port number (only use it if daemon has it enabled)\n";
-    u += "      --daemon-poll-interval=N  daemon poll interval in milliseconds (default: 1000)\n";
-    u += "      --daemon-job-timeout=N    daemon job timeout in milliseconds (default: 15000)\n";
-    u += "      --self-select=URL         self-select block templates from URL\n";
-    u += "      --submit-to-origin        also submit solution back to self-select URL\n";
-#   endif
-
     u += "  -r, --retries=N               number of times to retry before switch to backup server (default: 5)\n";
     u += "  -R, --retry-pause=N           time to pause between retries (default: 5)\n";
     u += "      --user-agent              set custom user-agent string for pool\n";
@@ -78,7 +69,6 @@ static inline const std::string &usage()
     u += "      --no-cpu                  disable CPU mining backend\n";
     u += "  -t, --threads=N               number of CPU threads, proper CPU affinity required for some optimizations.\n";
     u += "      --cpu-affinity=N          set process affinity to CPU core(s), mask 0x3 for cores 0 and 1\n";
-    u += "  -v, --av=N                    algorithm variation, 0 auto select\n";
     u += "      --cpu-priority=N          set process priority (0 idle, 2 normal to 5 highest)\n";
     u += "      --cpu-max-threads-hint=N  maximum CPU threads count (in percentage) hint for autoconfig\n";
     u += "      --cpu-memory-pool=N       number of 2 MB pages for persistent memory pool, -1 (auto), 0 (disable)\n";

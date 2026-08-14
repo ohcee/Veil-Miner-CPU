@@ -23,7 +23,6 @@
 #include "3rdparty/rapidjson/writer.h"
 #include "base/api/interfaces/IApiListener.h"
 #include "base/api/requests/HttpApiRequest.h"
-#include "base/crypto/keccak.h"
 #include "base/io/Env.h"
 #include "base/io/json/Json.h"
 #include "base/io/log/Log.h"
@@ -33,6 +32,10 @@
 #include "base/tools/Cvt.h"
 #include "core/config/Config.h"
 #include "version.h"
+
+extern "C" {
+#include "crypto/veil/sph_sha2.h"
+}
 
 
 #ifdef XMRIG_FEATURE_HTTP
@@ -238,7 +241,7 @@ void xmrig::Api::genId(const String &id)
 
     for (int i = 0; i < count; i++) {
         if (!interfaces[i].is_internal && interfaces[i].address.address4.sin_family == AF_INET) {
-            uint8_t hash[200];
+            uint8_t hash[32];
             const size_t addrSize = sizeof(interfaces[i].phys_addr);
             const size_t inSize   = (sizeof(APP_KIND) - 1) + addrSize + sizeof(uint16_t);
             const auto port       = static_cast<uint16_t>(m_base->config()->http().port());
@@ -248,7 +251,7 @@ void xmrig::Api::genId(const String &id)
             memcpy(input + sizeof(uint16_t), interfaces[i].phys_addr, addrSize);
             memcpy(input + sizeof(uint16_t) + addrSize, APP_KIND, (sizeof(APP_KIND) - 1));
 
-            keccak(input, inSize, hash);
+            sph_sha256_full(hash, input, inSize);
             Cvt::toHex(m_id, sizeof(m_id), hash, 8);
 
             delete [] input;

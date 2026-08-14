@@ -260,7 +260,7 @@ xmrig::CpuThreads xmrig::HwlocCpuInfo::allThreads(const Algorithm &algorithm, ui
     CpuThreads threads;
     threads.reserve(m_threads);
 
-    const uint32_t intensity = (algorithm.family() == Algorithm::GHOSTRIDER) ? 8 : 0;
+    const uint32_t intensity = 0;
 
     for (const int32_t pu : m_units) {
         threads.add(pu, intensity);
@@ -342,11 +342,6 @@ void xmrig::HwlocCpuInfo::processTopLevelCache(hwloc_obj_t cache, const Algorith
     }
 
     size_t cacheHashes = ((L3 + extra) + (scratchpad / 2)) / scratchpad;
-
-    const auto family = algorithm.family();
-    if (intensity && ((family == Algorithm::CN_PICO) || (family == Algorithm::CN_FEMTO)) && (cacheHashes / PUs) >= 2) {
-        intensity = 2;
-    }
 
 #   ifdef XMRIG_ALGO_RANDOMX
     if ((vendor() == VENDOR_INTEL) && (algorithm.family() == Algorithm::RANDOM_X) && L3_exclusive && (PUs < cores.size() * 2)) {

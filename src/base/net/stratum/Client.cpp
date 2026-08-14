@@ -48,7 +48,6 @@
 #include "base/net/stratum/Socks5.h"
 #include "base/net/tools/NetBuffer.h"
 #include "base/tools/Chrono.h"
-#include "base/tools/cryptonote/BlobReader.h"
 #include "base/tools/Cvt.h"
 #include "net/JobResult.h"
 
@@ -198,14 +197,9 @@ int64_t xmrig::Client::submit(const JobResult &result)
 #   else
     char *nonce = m_tempBuf.data();
     char *data  = m_tempBuf.data() + 16;
-    char *signature = m_tempBuf.data() + 88;
 
     Cvt::toHex(nonce, sizeof(uint32_t) * 2 + 1, reinterpret_cast<const uint8_t *>(&result.nonce), sizeof(uint32_t));
     Cvt::toHex(data, 65, result.result(), 32);
-
-    if (result.minerSignature()) {
-        Cvt::toHex(signature, 129, result.minerSignature(), 64);
-    }
 #   endif
 
     Document doc(kObjectType);
@@ -217,11 +211,7 @@ int64_t xmrig::Client::submit(const JobResult &result)
     params.AddMember("nonce",  StringRef(nonce), allocator);
     params.AddMember("result", StringRef(data), allocator);
 
-#   ifndef XMRIG_PROXY_PROJECT
-    if (result.minerSignature()) {
-        params.AddMember("sig", StringRef(signature), allocator);
-    }
-#   else
+#   ifdef XMRIG_PROXY_PROJECT
     if (result.sig) {
         params.AddMember("sig", StringRef(result.sig), allocator);
     }
@@ -381,23 +371,9 @@ bool xmrig::Client::parseJob(const rapidjson::Value &params, int *code)
         job.setAlgorithm(m_pool.coin().algorithm(blobVersion));
     }
 
-#   ifdef XMRIG_FEATURE_HTTP
-    if (m_pool.mode() == Pool::MODE_SELF_SELECT) {
-        job.setExtraNonce(Json::getString(params, "extra_nonce"));
-        job.setPoolWallet(Json::getString(params, "pool_wallet"));
-
-        if (job.extraNonce().isNull() || job.poolWallet().isNull()) {
-            *code = 4;
-            return false;
-        }
-    }
-    else
-#   endif
-    {
-        if (!job.setBlob(blobData)) {
-            *code = 4;
-            return false;
-        }
+    if (!job.setBlob(blobData)) {
+        *code = 4;
+        return false;
     }
 
     if (!job.setTarget(Json::getString(params, "target"))) {
@@ -412,12 +388,10 @@ bool xmrig::Client::parseJob(const rapidjson::Value &params, int *code)
         return false;
     }
 
-    if (m_pool.mode() != Pool::MODE_SELF_SELECT && job.algorithm().family() == Algorithm::RANDOM_X && !job.setSeedHash(Json::getString(params, "seed_hash"))) {
+    if (job.algorithm().family() == Algorithm::RANDOM_X && !job.setSeedHash(Json::getString(params, "seed_hash"))) {
         *code = 7;
         return false;
     }
-
-    job.setSigKey(Json::getString(params, "sig_key"));
 
     m_job.setClientId(m_rpcId);
 

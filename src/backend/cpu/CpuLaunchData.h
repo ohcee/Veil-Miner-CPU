@@ -28,7 +28,6 @@
 
 
 #include "base/crypto/Algorithm.h"
-#include "crypto/cn/CnHash.h"
 #include "crypto/common/Assembly.h"
 #include "crypto/common/Nonce.h"
 
@@ -47,7 +46,6 @@ public:
     CpuLaunchData(const Miner *miner, const Algorithm &algorithm, const CpuConfig &config, const CpuThread &thread, size_t threads, const std::vector<int64_t>& affinities);
 
     bool isEqual(const CpuLaunchData &other) const;
-    CnHash::AlgoVariant av() const;
 
     inline constexpr static Nonce::Backend backend()            { return Nonce::CPU; }
 

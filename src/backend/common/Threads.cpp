@@ -19,7 +19,6 @@
 #include "backend/common/Threads.h"
 #include "3rdparty/rapidjson/document.h"
 #include "backend/cpu/CpuThreads.h"
-#include "crypto/cn/CnAlgo.h"
 
 
 
@@ -109,10 +108,6 @@ xmrig::String xmrig::Threads<T>::profileName(const Algorithm &algorithm, bool st
 
     if (strict) {
         return String();
-    }
-
-    if (algorithm.family() == Algorithm::CN && algorithm.base() == Algorithm::CN_2 && has(Algorithm::kCN_2)) {
-        return Algorithm::kCN_2;
     }
 
     if (name.contains("/")) {

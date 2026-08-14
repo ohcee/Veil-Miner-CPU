@@ -47,10 +47,6 @@ public:
 
     static inline Algorithm::Id id(Algorithm::Id algorithm)
     {
-        if (algorithm == Algorithm::RX_SFX) {
-            return Algorithm::RX_0;
-        }
-
         return algorithm;
     }
 };

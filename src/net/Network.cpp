@@ -112,15 +112,9 @@ void xmrig::Network::onActive(IStrategy *strategy, IClient *client)
 {
     const auto &pool = client->pool();
 
-
-    char zmq_buf[32] = {};
-    if (client->pool().zmq_port() >= 0) {
-        snprintf(zmq_buf, sizeof(zmq_buf), " (ZMQ:%d)", client->pool().zmq_port());
-    }
-
     const char *tlsVersion = client->tlsVersion();
-    LOG_INFO("%s " WHITE_BOLD("use %s ") CYAN_BOLD("%s:%d%s ") GREEN_BOLD("%s") " " BLACK_BOLD("%s"),
-             Tags::network(), client->mode(), pool.host().data(), pool.port(), zmq_buf, tlsVersion ? tlsVersion : "", client->ip().data());
+    LOG_INFO("%s " WHITE_BOLD("use %s ") CYAN_BOLD("%s:%d ") GREEN_BOLD("%s") " " BLACK_BOLD("%s"),
+             Tags::network(), client->mode(), pool.host().data(), pool.port(), tlsVersion ? tlsVersion : "", client->ip().data());
 
     const char *fingerprint = client->tlsFingerprint();
     if (fingerprint != nullptr) {
@@ -236,24 +230,13 @@ void xmrig::Network::setJob(IClient *client, const Job &job)
         uint64_t diff       = job.diff();
         const char *scale   = NetworkState::scaleDiff(diff);
 
-        char zmq_buf[32] = {};
-        if (client->pool().zmq_port() >= 0) {
-            snprintf(zmq_buf, sizeof(zmq_buf), " (ZMQ:%d)", client->pool().zmq_port());
-        }
-
-        char tx_buf[32] = {};
-        const uint32_t num_transactions = job.getNumTransactions();
-        if (num_transactions > 0) {
-            snprintf(tx_buf, sizeof(tx_buf), " (%u tx)", num_transactions);
-        }
-
         char height_buf[64] = {};
         if (job.height() > 0) {
             snprintf(height_buf, sizeof(height_buf), " height " WHITE_BOLD("%" PRIu64), job.height());
         }
 
-        LOG_INFO("%s " MAGENTA_BOLD("new job") " from " WHITE_BOLD("%s:%d%s") " diff " WHITE_BOLD("%" PRIu64 "%s") " algo " WHITE_BOLD("%s") "%s%s",
-                 Tags::network(), client->pool().host().data(), client->pool().port(), zmq_buf, diff, scale, job.algorithm().name(), height_buf, tx_buf);
+        LOG_INFO("%s " MAGENTA_BOLD("new job") " from " WHITE_BOLD("%s:%d") " diff " WHITE_BOLD("%" PRIu64 "%s") " algo " WHITE_BOLD("%s") "%s",
+                 Tags::network(), client->pool().host().data(), client->pool().port(), diff, scale, job.algorithm().name(), height_buf);
     }
 
     m_controller->miner()->setJob(job);

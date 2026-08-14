@@ -3,8 +3,6 @@ set(HEADERS_BASE
     src/base/api/interfaces/IApiListener.h
     src/base/crypto/Algorithm.h
     src/base/crypto/Coin.h
-    src/base/crypto/keccak.h
-    src/base/crypto/sha3.h
     src/base/io/Async.h
     src/base/io/Console.h
     src/base/io/Env.h
@@ -74,12 +72,6 @@ set(HEADERS_BASE
     src/base/tools/bswap_64.h
     src/base/tools/Buffer.h
     src/base/tools/Chrono.h
-    src/base/tools/cryptonote/BlobReader.h
-    src/base/tools/cryptonote/BlockTemplate.h
-    src/base/tools/cryptonote/crypto-ops.h
-    src/base/tools/cryptonote/Signatures.h
-    src/base/tools/cryptonote/umul128.h
-    src/base/tools/cryptonote/WalletAddress.h
     src/base/tools/Cvt.h
     src/base/tools/Handle.h
     src/base/tools/Span.h
@@ -91,8 +83,6 @@ set(SOURCES_BASE
     src/3rdparty/fmt/format.cc
     src/base/crypto/Algorithm.cpp
     src/base/crypto/Coin.cpp
-    src/base/crypto/keccak.cpp
-    src/base/crypto/sha3.cpp
     src/base/io/Async.cpp
     src/base/io/Console.cpp
     src/base/io/Env.cpp
@@ -134,11 +124,6 @@ set(SOURCES_BASE
     src/base/net/tools/NetBuffer.cpp
     src/base/tools/Arguments.cpp
     src/base/tools/Chrono.cpp
-    src/base/tools/cryptonote/BlockTemplate.cpp
-    src/base/tools/cryptonote/crypto-ops-data.c
-    src/base/tools/cryptonote/crypto-ops.c
-    src/base/tools/cryptonote/Signatures.cpp
-    src/base/tools/cryptonote/WalletAddress.cpp
     src/base/tools/Cvt.cpp
     src/base/tools/String.cpp
     src/base/tools/Timer.cpp
@@ -199,8 +184,6 @@ if (WITH_HTTP)
         src/base/net/http/HttpContext.h
         src/base/net/http/HttpData.h
         src/base/net/http/HttpResponse.h
-        src/base/net/stratum/DaemonClient.h
-        src/base/net/stratum/SelfSelectClient.h
         src/base/net/tools/TcpServer.h
         )
 
@@ -219,8 +202,6 @@ if (WITH_HTTP)
         src/base/net/http/HttpData.cpp
         src/base/net/http/HttpListener.cpp
         src/base/net/http/HttpResponse.cpp
-        src/base/net/stratum/DaemonClient.cpp
-        src/base/net/stratum/SelfSelectClient.cpp
         src/base/net/tools/TcpServer.cpp
         )
 

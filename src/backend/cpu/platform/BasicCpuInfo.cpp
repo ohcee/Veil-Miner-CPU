@@ -30,12 +30,6 @@
 #endif
 
 
-#include "crypto/cn/CryptoNight_monero.h"
-#ifdef XMRIG_VAES
-#   include "crypto/cn/CryptoNight_x86_vaes.h"
-#endif
-
-
 #include "backend/cpu/platform/BasicCpuInfo.h"
 #include "3rdparty/rapidjson/document.h"
 #include "crypto/common/Assembly.h"
@@ -299,8 +293,6 @@ xmrig::BasicCpuInfo::BasicCpuInfo() :
     }
 #   endif
 
-    cn_sse41_enabled = has(FLAG_SSE41);
-    cn_vaes_enabled = has(FLAG_VAES);
 }
 
 
@@ -326,10 +318,6 @@ xmrig::CpuThreads xmrig::BasicCpuInfo::threads(const Algorithm &algorithm, uint3
 
 #   ifdef XMRIG_ALGO_RANDOMX
     if (f == Algorithm::RANDOM_X) {
-        if (algorithm == Algorithm::RX_WOW) {
-            return count;
-        }
-
         return std::max<size_t>(count / 2, 1);
     }
 #   endif

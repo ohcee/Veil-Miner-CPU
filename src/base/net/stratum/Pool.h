@@ -44,9 +44,6 @@ class Pool
 public:
     enum Mode {
         MODE_POOL,
-        MODE_DAEMON,
-        MODE_SELF_SELECT,
-        MODE_AUTO_ETH,
     };
 
     static const String kDefaultPassword;
@@ -54,33 +51,23 @@ public:
 
     static const char *kAlgo;
     static const char *kCoin;
-    static const char *kDaemon;
-    static const char *kDaemonPollInterval;
-    static const char *kDaemonJobTimeout;
     static const char *kEnabled;
     static const char *kFingerprint;
     static const char *kKeepalive;
     static const char *kNicehash;
     static const char *kPass;
     static const char *kRigId;
-    static const char *kSelfSelect;
     static const char *kSOCKS5;
-    static const char *kSubmitToOrigin;
     static const char *kTls;
     static const char *kSni;
     static const char *kUrl;
     static const char *kUser;
-    static const char *kSpendSecretKey;
-    static const char *kDaemonZMQPort;
     static const char *kNicehashHost;
 
     constexpr static int kKeepAliveTimeout         = 60;
     constexpr static uint16_t kDefaultPort         = 3333;
-    constexpr static uint64_t kDefaultPollInterval = 1000;
-    constexpr static uint64_t kDefaultJobTimeout   = 15000;
 
     Pool() = default;
-    Pool(const char *host, uint16_t port, const char *user, const char *password, const char* spendSecretKey, int keepAlive, bool nicehash, bool tls, Mode mode);
     Pool(const char *url);
     Pool(const rapidjson::Value &object);
 
@@ -98,14 +85,9 @@ public:
     inline const String &rigId() const                  { return m_rigId; }
     inline const String &url() const                    { return m_url.url(); }
     inline const String &user() const                   { return !m_user.isNull() ? m_user : kDefaultUser; }
-    inline const String &spendSecretKey() const         { return m_spendSecretKey; }
-    inline const Url &daemon() const                    { return m_daemon; }
     inline int keepAlive() const                        { return m_keepAlive; }
     inline Mode mode() const                            { return m_mode; }
     inline uint16_t port() const                        { return m_url.port(); }
-    inline int zmq_port() const                         { return m_zmqPort; }
-    inline uint64_t pollInterval() const                { return m_pollInterval; }
-    inline uint64_t jobTimeout() const                  { return m_jobTimeout; }
     inline void setAlgo(const Algorithm &algorithm)     { m_algorithm = algorithm; }
     inline void setUrl(const char *url)                 { m_url = Url(url); }
     inline void setPassword(const String &password)     { m_password = password; }
@@ -141,7 +123,6 @@ private:
     void setKeepAlive(const rapidjson::Value &value);
 
     Algorithm m_algorithm;
-    bool m_submitToOrigin           = false;
     Coin m_coin;
     int m_keepAlive                 = 0;
     Mode m_mode                     = MODE_POOL;
@@ -151,12 +132,7 @@ private:
     String m_password;
     String m_rigId;
     String m_user;
-    String m_spendSecretKey;
-    uint64_t m_pollInterval         = kDefaultPollInterval;
-    uint64_t m_jobTimeout           = kDefaultJobTimeout;
-    Url m_daemon;
     Url m_url;
-    int m_zmqPort                   = -1;
 
 };
 

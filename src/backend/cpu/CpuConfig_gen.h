@@ -42,22 +42,6 @@ template<Algorithm::Family FAMILY>
 static inline size_t generate(Threads<CpuThreads> &, uint32_t) { return 0; }
 
 
-template<>
-size_t inline generate<Algorithm::CN>(Threads<CpuThreads> &threads, uint32_t limit)
-{
-    size_t count = 0;
-
-    count += generate(Algorithm::kCN, threads, Algorithm::CN_1, limit);
-
-    if (!threads.isExist(Algorithm::CN_0)) {
-        threads.disable(Algorithm::CN_0);
-        ++count;
-    }
-
-    return count;
-}
-
-
 
 
 
@@ -70,28 +54,7 @@ size_t inline generate<Algorithm::CN>(Threads<CpuThreads> &threads, uint32_t lim
 template<>
 size_t inline generate<Algorithm::RANDOM_X>(Threads<CpuThreads> &threads, uint32_t limit)
 {
-    size_t count = 0;
-    auto cpuInfo = Cpu::info();
-    auto wow     = cpuInfo->threads(Algorithm::RX_WOW, limit);
-
-    if (!threads.isExist(Algorithm::RX_ARQ)) {
-        auto arq = cpuInfo->threads(Algorithm::RX_ARQ, limit);
-        if (arq == wow) {
-            threads.setAlias(Algorithm::RX_ARQ, Algorithm::kRX_WOW);
-            ++count;
-        }
-        else {
-            count += threads.move(Algorithm::kRX_ARQ, std::move(arq));
-        }
-    }
-
-    if (!threads.isExist(Algorithm::RX_WOW)) {
-        count += threads.move(Algorithm::kRX_WOW, std::move(wow));
-    }
-
-    count += generate(Algorithm::kRX, threads, Algorithm::RX_0, limit);
-
-    return count;
+    return generate(Algorithm::kRX, threads, Algorithm::RX_VEIL, limit);
 }
 #endif
 

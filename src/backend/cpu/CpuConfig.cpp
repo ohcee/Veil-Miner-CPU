@@ -92,10 +92,6 @@ size_t xmrig::CpuConfig::memPoolSize() const
 
 std::vector<xmrig::CpuLaunchData> xmrig::CpuConfig::get(const Miner *miner, const Algorithm &algorithm) const
 {
-    if (algorithm.family() == Algorithm::KAWPOW) {
-        return {};
-    }
-
     std::vector<CpuLaunchData> out;
     const auto &threads = m_threads.get(algorithm);
 
@@ -162,14 +158,7 @@ void xmrig::CpuConfig::generate()
 
     size_t count = 0;
 
-    count += xmrig::generate<Algorithm::CN>(m_threads, m_limit);
-    count += xmrig::generate<Algorithm::CN_LITE>(m_threads, m_limit);
-    count += xmrig::generate<Algorithm::CN_HEAVY>(m_threads, m_limit);
-    count += xmrig::generate<Algorithm::CN_PICO>(m_threads, m_limit);
-    count += xmrig::generate<Algorithm::CN_FEMTO>(m_threads, m_limit);
     count += xmrig::generate<Algorithm::RANDOM_X>(m_threads, m_limit);
-    count += xmrig::generate<Algorithm::ARGON2>(m_threads, m_limit);
-    count += xmrig::generate<Algorithm::GHOSTRIDER>(m_threads, m_limit);
 
     m_shouldSave |= count > 0;
 }

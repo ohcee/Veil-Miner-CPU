@@ -60,9 +60,6 @@ public:
         VerboseKey           = 1100,
         TlsKey               = 1013,
         FingerprintKey       = 1014,
-        DaemonKey            = 1018,
-        DaemonPollKey        = 1019,
-        SelfSelectKey        = 1028,
         DataDirKey           = 1035,
         TitleKey             = 1037,
         NoTitleKey           = 1038,
@@ -70,14 +67,10 @@ public:
         DmiKey               = 1049,
         HugePageSizeKey      = 1050,
         PauseOnActiveKey     = 1051,
-        SubmitToOriginKey    = 1052,
         DnsIPv4Key           = '4',
         DnsIPv6Key           = '6',
         DnsTtlKey            = 1054,
-        SpendSecretKey       = 1055,
-        DaemonZMQPortKey     = 1056,
         HugePagesJitKey      = 1057,
-        DaemonJobTimeoutKey  = 1059,
 
         // xmrig common
         CPUPriorityKey       = 1021,
@@ -86,7 +79,6 @@ public:
 
         // xmrig cpu
         CPUKey               = 1024,
-        AVKey                = 'v',
         CPUAffinityKey       = 1020,
         DryRunKey            = 5000,
         HugePagesKey         = 1009,

@@ -22,7 +22,6 @@
 #include "base/net/stratum/Pool.h"
 #include "base/net/stratum/Pools.h"
 #include "core/config/Config.h"
-#include "crypto/cn/CnHash.h"
 
 
 #ifdef XMRIG_ALGO_RANDOMX
@@ -41,43 +40,6 @@ static const char *kAsterisk    = "*";
 static const char *kEnabled     = "enabled";
 static const char *kIntensity   = "intensity";
 static const char *kThreads     = "threads";
-
-
-static inline uint64_t intensity(uint64_t av)
-{
-    switch (av) {
-    case CnHash::AV_SINGLE:
-    case CnHash::AV_SINGLE_SOFT:
-        return 1;
-
-    case CnHash::AV_DOUBLE_SOFT:
-    case CnHash::AV_DOUBLE:
-        return 2;
-
-    case CnHash::AV_TRIPLE_SOFT:
-    case CnHash::AV_TRIPLE:
-        return 3;
-
-    case CnHash::AV_QUAD_SOFT:
-    case CnHash::AV_QUAD:
-        return 4;
-
-    case CnHash::AV_PENTA_SOFT:
-    case CnHash::AV_PENTA:
-        return 5;
-
-    default:
-        break;
-    }
-
-    return 1;
-}
-
-
-static inline bool isHwAes(uint64_t av)
-{
-    return av == CnHash::AV_SINGLE || av == CnHash::AV_DOUBLE || (av > CnHash::AV_DOUBLE_SOFT && av < CnHash::AV_TRIPLE_SOFT);
-}
 
 
 } // namespace xmrig
@@ -111,7 +73,6 @@ void xmrig::ConfigTransform::transform(rapidjson::Document &doc, int key, const 
     BaseTransform::transform(doc, key, arg);
 
     switch (key) {
-    case IConfig::AVKey:           /* --av */
     case IConfig::CPUPriorityKey:  /* --cpu-priority */
     case IConfig::ThreadsKey:      /* --threads */
     case IConfig::HugePageSizeKey: /* --hugepage-size */
@@ -222,11 +183,6 @@ void xmrig::ConfigTransform::transformUint64(rapidjson::Document &doc, int key, 
 
     case IConfig::ThreadsKey: /* --threads */
         m_threads = arg;
-        break;
-
-    case IConfig::AVKey: /* --av */
-        m_intensity = intensity(arg);
-        set(doc, CpuConfig::kField, CpuConfig::kHwAes, isHwAes(arg));
         break;
 
     case IConfig::CPUPriorityKey: /* --cpu-priority */

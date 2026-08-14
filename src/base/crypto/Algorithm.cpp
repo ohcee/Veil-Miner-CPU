@@ -37,37 +37,8 @@ namespace xmrig {
 
 
 const char *Algorithm::kINVALID         = "invalid";
-const char *Algorithm::kCN              = "cn";
-const char *Algorithm::kCN_0            = "cn/0";
-const char *Algorithm::kCN_1            = "cn/1";
-const char *Algorithm::kCN_2            = "cn/2";
-const char *Algorithm::kCN_R            = "cn/r";
-const char *Algorithm::kCN_FAST         = "cn/fast";
-const char *Algorithm::kCN_HALF         = "cn/half";
-const char *Algorithm::kCN_XAO          = "cn/xao";
-const char *Algorithm::kCN_RTO          = "cn/rto";
-const char *Algorithm::kCN_RWZ          = "cn/rwz";
-const char *Algorithm::kCN_ZLS          = "cn/zls";
-const char *Algorithm::kCN_DOUBLE       = "cn/double";
-const char *Algorithm::kCN_CCX          = "cn/ccx";
-
-
-
-
-
-#ifdef XMRIG_ALGO_RANDOMX
 const char *Algorithm::kRX              = "rx";
-const char *Algorithm::kRX_0            = "rx/0";
 const char *Algorithm::kRX_VEIL         = "rx/veil";
-const char *Algorithm::kRX_WOW          = "rx/wow";
-const char *Algorithm::kRX_ARQ          = "rx/arq";
-const char *Algorithm::kRX_GRAFT        = "rx/graft";
-const char *Algorithm::kRX_SFX          = "rx/sfx";
-const char *Algorithm::kRX_YADA         = "rx/yada";
-#endif
-
-
-
 
 
 #define ALGO_NAME(ALGO)         { Algorithm::ALGO, Algorithm::k##ALGO }
@@ -76,35 +47,7 @@ const char *Algorithm::kRX_YADA         = "rx/yada";
 
 
 static const std::map<uint32_t, const char *> kAlgorithmNames = {
-    ALGO_NAME(CN_0),
-    ALGO_NAME(CN_1),
-    ALGO_NAME(CN_2),
-    ALGO_NAME(CN_R),
-    ALGO_NAME(CN_FAST),
-    ALGO_NAME(CN_HALF),
-    ALGO_NAME(CN_XAO),
-    ALGO_NAME(CN_RTO),
-    ALGO_NAME(CN_RWZ),
-    ALGO_NAME(CN_ZLS),
-    ALGO_NAME(CN_DOUBLE),
-    ALGO_NAME(CN_CCX),
-
-
-
-
-
-#   ifdef XMRIG_ALGO_RANDOMX
-    ALGO_NAME(RX_0),
     ALGO_NAME(RX_VEIL),
-    ALGO_NAME(RX_WOW),
-    ALGO_NAME(RX_ARQ),
-    ALGO_NAME(RX_GRAFT),
-    ALGO_NAME(RX_SFX),
-    ALGO_NAME(RX_YADA),
-#   endif
-
-
-
 };
 
 
@@ -115,57 +58,10 @@ struct aliasCompare
 
 
 static const std::map<const char *, Algorithm::Id, aliasCompare> kAlgorithmAliases = {
-    ALGO_ALIAS_AUTO(CN_0),          ALGO_ALIAS(CN_0,            "cryptonight/0"),
-                                    ALGO_ALIAS(CN_0,            "cryptonight"),
-                                    ALGO_ALIAS(CN_0,            "cn"),
-    ALGO_ALIAS_AUTO(CN_1),          ALGO_ALIAS(CN_1,            "cryptonight/1"),
-                                    ALGO_ALIAS(CN_1,            "cryptonight-monerov7"),
-                                    ALGO_ALIAS(CN_1,            "cryptonight_v7"),
-    ALGO_ALIAS_AUTO(CN_2),          ALGO_ALIAS(CN_2,            "cryptonight/2"),
-                                    ALGO_ALIAS(CN_2,            "cryptonight-monerov8"),
-                                    ALGO_ALIAS(CN_2,            "cryptonight_v8"),
-    ALGO_ALIAS_AUTO(CN_FAST),       ALGO_ALIAS(CN_FAST,         "cryptonight/fast"),
-                                    ALGO_ALIAS(CN_FAST,         "cryptonight/msr"),
-                                    ALGO_ALIAS(CN_FAST,         "cn/msr"),
-    ALGO_ALIAS_AUTO(CN_R),          ALGO_ALIAS(CN_R,            "cryptonight/r"),
-                                    ALGO_ALIAS(CN_R,            "cryptonight_r"),
-    ALGO_ALIAS_AUTO(CN_XAO),        ALGO_ALIAS(CN_XAO,          "cryptonight/xao"),
-                                    ALGO_ALIAS(CN_XAO,          "cryptonight_alloy"),
-    ALGO_ALIAS_AUTO(CN_HALF),       ALGO_ALIAS(CN_HALF,         "cryptonight/half"),
-    ALGO_ALIAS_AUTO(CN_RTO),        ALGO_ALIAS(CN_RTO,          "cryptonight/rto"),
-    ALGO_ALIAS_AUTO(CN_RWZ),        ALGO_ALIAS(CN_RWZ,          "cryptonight/rwz"),
-    ALGO_ALIAS_AUTO(CN_ZLS),        ALGO_ALIAS(CN_ZLS,          "cryptonight/zls"),
-    ALGO_ALIAS_AUTO(CN_DOUBLE),     ALGO_ALIAS(CN_DOUBLE,       "cryptonight/double"),
-    ALGO_ALIAS_AUTO(CN_CCX),        ALGO_ALIAS(CN_CCX,          "cryptonight/ccx"),
-                                    ALGO_ALIAS(CN_CCX,          "cryptonight/conceal"),
-                                    ALGO_ALIAS(CN_CCX,          "cn/conceal"),
-
-
-
-
-
-#   ifdef XMRIG_ALGO_RANDOMX
-    ALGO_ALIAS_AUTO(RX_0),          ALGO_ALIAS(RX_0,            "randomx/0"),
-                                    ALGO_ALIAS(RX_0,            "randomx/test"),
-                                    ALGO_ALIAS(RX_0,            "rx/test"),
-                                    ALGO_ALIAS(RX_0,            "randomx"),
-                                    ALGO_ALIAS(RX_0,            "rx"),
     ALGO_ALIAS_AUTO(RX_VEIL),       ALGO_ALIAS(RX_VEIL,         "randomx/veil"),
                                     ALGO_ALIAS(RX_VEIL,         "randomveil"),
-    ALGO_ALIAS_AUTO(RX_WOW),        ALGO_ALIAS(RX_WOW,          "randomx/wow"),
-                                    ALGO_ALIAS(RX_WOW,          "randomwow"),
-    ALGO_ALIAS_AUTO(RX_ARQ),        ALGO_ALIAS(RX_ARQ,          "randomx/arq"),
-                                    ALGO_ALIAS(RX_ARQ,          "randomarq"),
-    ALGO_ALIAS_AUTO(RX_GRAFT),      ALGO_ALIAS(RX_GRAFT,        "randomx/graft"),
-                                    ALGO_ALIAS(RX_GRAFT,        "randomgraft"),
-    ALGO_ALIAS_AUTO(RX_SFX),        ALGO_ALIAS(RX_SFX,          "randomx/sfx"),
-                                    ALGO_ALIAS(RX_SFX,          "randomsfx"),
-    ALGO_ALIAS_AUTO(RX_YADA),       ALGO_ALIAS(RX_YADA,         "randomx/yada"),
-                                    ALGO_ALIAS(RX_YADA,         "randomyada"),
-#   endif
-
-
-
+                                    ALGO_ALIAS(RX_VEIL,         "randomx"),
+                                    ALGO_ALIAS(RX_VEIL,         "rx"),
 };
 
 
@@ -232,15 +128,7 @@ size_t xmrig::Algorithm::count()
 std::vector<xmrig::Algorithm> xmrig::Algorithm::all(const std::function<bool(const Algorithm &algo)> &filter)
 {
     static const std::vector<Id> order = {
-        CN_0, CN_1, CN_2, CN_R, CN_FAST, CN_HALF, CN_XAO, CN_RTO, CN_RWZ, CN_ZLS, CN_DOUBLE, CN_CCX,
-        CN_LITE_0, CN_LITE_1,
-        CN_HEAVY_0, CN_HEAVY_TUBE, CN_HEAVY_XHV,
-        CN_PICO_0, CN_PICO_TLO,
-        CN_UPX2,
-        RX_0, RX_VEIL, RX_WOW, RX_ARQ, RX_GRAFT, RX_SFX, RX_YADA,
-        AR2_CHUKWA, AR2_CHUKWA_V2, AR2_WRKZ,
-        KAWPOW_RVN,
-        GHOSTRIDER_RTM
+        RX_VEIL,
     };
 
     Algorithms out;

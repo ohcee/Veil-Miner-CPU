@@ -46,7 +46,6 @@ public:
     static void setListener(IJobResultListener *listener, bool hwAES);
     static void stop();
     static void submit(const Job &job, uint32_t nonce, const uint8_t *result);
-    static void submit(const Job& job, uint32_t nonce, const uint8_t* result, const uint8_t* miner_signature);
     static void submit(const JobResult &result);
 
 };
