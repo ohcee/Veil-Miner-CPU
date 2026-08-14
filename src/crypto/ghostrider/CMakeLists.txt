@@ -13,7 +13,6 @@ set(HEADERS
     sph_jh.h
     sph_keccak.h
     sph_luffa.h
-    sph_sha2.h
     sph_shabal.h
     sph_shavite.h
     sph_simd.h
@@ -36,7 +35,6 @@ set(SOURCES
     sph_shabal.c
     sph_shavite.c
     sph_simd.c
-    sph_sha2.c
     sph_skein.c
     sph_whirlpool.c
     ghostrider.cpp
@@ -56,7 +54,6 @@ if (CMAKE_C_COMPILER_ID MATCHES MSVC)
     set_source_files_properties(sph_shabal.c PROPERTIES COMPILE_FLAGS_RELEASE "/O1 /Oi /Os")
     set_source_files_properties(sph_shavite.c PROPERTIES COMPILE_FLAGS_RELEASE "/O1 /Oi /Os")
     set_source_files_properties(sph_simd.c PROPERTIES COMPILE_FLAGS_RELEASE "/O1 /Oi /Os")
-    set_source_files_properties(sph_sha2.c PROPERTIES COMPILE_FLAGS_RELEASE "/O1 /Oi /Os")
     set_source_files_properties(sph_skein.c PROPERTIES COMPILE_FLAGS_RELEASE "/O1 /Oi /Os")
     set_source_files_properties(sph_whirlpool.c PROPERTIES COMPILE_FLAGS_RELEASE "/O1 /Oi /Os")
 elseif (CMAKE_C_COMPILER_ID MATCHES GNU OR CMAKE_C_COMPILER_ID MATCHES Clang)
@@ -73,7 +70,6 @@ elseif (CMAKE_C_COMPILER_ID MATCHES GNU OR CMAKE_C_COMPILER_ID MATCHES Clang)
     set_source_files_properties(sph_shabal.c PROPERTIES COMPILE_FLAGS "-Os")
     set_source_files_properties(sph_shavite.c PROPERTIES COMPILE_FLAGS "-Os")
     set_source_files_properties(sph_simd.c PROPERTIES COMPILE_FLAGS "-Os")
-    set_source_files_properties(sph_sha2.c PROPERTIES COMPILE_FLAGS "-Os")
     set_source_files_properties(sph_skein.c PROPERTIES COMPILE_FLAGS "-Os")
     set_source_files_properties(sph_whirlpool.c PROPERTIES COMPILE_FLAGS "-Os")
 endif()

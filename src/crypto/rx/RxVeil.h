@@ -8,7 +8,7 @@
 class randomx_vm;
 
 extern "C" {
-    #include "crypto/ghostrider/sph_sha2.h"
+    #include "crypto/veil/sph_sha2.h"
 }
 
 namespace xmrig {
