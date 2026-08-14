@@ -33,16 +33,3 @@ if (WITH_RANDOMX AND WITH_BENCHMARK)
         src/backend/common/benchmark/BenchState.cpp
         )
 endif()
-
-
-if (WITH_OPENCL OR WITH_CUDA)
-    list(APPEND HEADERS_BACKEND_COMMON
-        src/backend/common/HashrateInterpolator.h
-        src/backend/common/GpuWorker.h
-        )
-
-    list(APPEND SOURCES_BACKEND_COMMON
-        src/backend/common/HashrateInterpolator.cpp
-        src/backend/common/GpuWorker.cpp
-        )
-endif()

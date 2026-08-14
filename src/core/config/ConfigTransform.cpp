@@ -109,11 +109,6 @@ void xmrig::ConfigTransform::finalize(rapidjson::Document &doc)
         doc[CpuConfig::kField].AddMember(StringRef(kAsterisk), profile, doc.GetAllocator());
     }
 
-#   ifdef XMRIG_FEATURE_OPENCL
-    if (m_opencl) {
-        set(doc, Config::kOcl, kEnabled, true);
-    }
-#   endif
 }
 
 
@@ -195,56 +190,9 @@ void xmrig::ConfigTransform::transform(rapidjson::Document &doc, int key, const 
         return set(doc, CpuConfig::kField, CpuConfig::kHugePagesJit, true);
 #   endif
 
-#   ifdef XMRIG_FEATURE_OPENCL
-    case IConfig::OclKey: /* --opencl */
-        m_opencl = true;
-        break;
 
-    case IConfig::OclCacheKey: /* --opencl-no-cache */
-        return set(doc, Config::kOcl, "cache", false);
 
-    case IConfig::OclLoaderKey: /* --opencl-loader */
-        return set(doc, Config::kOcl, "loader", arg);
 
-    case IConfig::OclDevicesKey: /* --opencl-devices */
-        m_opencl = true;
-        return set(doc, Config::kOcl, "devices-hint", arg);
-
-    case IConfig::OclPlatformKey: /* --opencl-platform */
-        if (strlen(arg) < 3) {
-            return set(doc, Config::kOcl, "platform", static_cast<uint64_t>(strtol(arg, nullptr, 10)));
-        }
-
-        return set(doc, Config::kOcl, "platform", arg);
-#   endif
-
-#   ifdef XMRIG_FEATURE_CUDA
-    case IConfig::CudaKey: /* --cuda */
-        return set(doc, Config::kCuda, kEnabled, true);
-
-    case IConfig::CudaLoaderKey: /* --cuda-loader */
-        return set(doc, Config::kCuda, "loader", arg);
-
-    case IConfig::CudaDevicesKey: /* --cuda-devices */
-        set(doc, Config::kCuda, kEnabled, true);
-        return set(doc, Config::kCuda, "devices-hint", arg);
-
-    case IConfig::CudaBFactorKey: /* --cuda-bfactor-hint */
-        return set(doc, Config::kCuda, "bfactor-hint", static_cast<uint64_t>(strtol(arg, nullptr, 10)));
-
-    case IConfig::CudaBSleepKey: /* --cuda-bsleep-hint */
-        return set(doc, Config::kCuda, "bsleep-hint", static_cast<uint64_t>(strtol(arg, nullptr, 10)));
-#   endif
-
-#   ifdef XMRIG_FEATURE_NVML
-    case IConfig::NvmlKey: /* --no-nvml */
-        return set(doc, Config::kCuda, "nvml", false);
-#   endif
-
-#   if defined(XMRIG_FEATURE_NVML) || defined (XMRIG_FEATURE_ADL)
-    case IConfig::HealthPrintTimeKey: /* --health-print-time */
-        return set(doc, Config::kHealthPrintTime, static_cast<uint64_t>(strtol(arg, nullptr, 10)));
-#   endif
 
 #   ifdef XMRIG_FEATURE_DMI
     case IConfig::DmiKey: /* --no-dmi */

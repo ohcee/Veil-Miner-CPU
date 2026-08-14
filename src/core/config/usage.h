@@ -106,27 +106,7 @@ static inline const std::string &usage()
     u += "      --randomx-cache-qos       enable Cache QoS\n";
 #   endif
 
-#   ifdef XMRIG_FEATURE_OPENCL
-    u += "\nOpenCL backend:\n";
-    u += "      --opencl                  enable OpenCL mining backend\n";
-    u += "      --opencl-devices=N        comma separated list of OpenCL devices to use\n";
-    u += "      --opencl-platform=N       OpenCL platform index or name\n";
-    u += "      --opencl-loader=PATH      path to OpenCL-ICD-Loader (OpenCL.dll or libOpenCL.so)\n";
-    u += "      --opencl-no-cache         disable OpenCL cache\n";
-    u += "      --print-platforms         print available OpenCL platforms and exit\n";
-#   endif
 
-#   ifdef XMRIG_FEATURE_CUDA
-    u += "\nCUDA backend:\n";
-    u += "      --cuda                    enable CUDA mining backend\n";
-    u += "      --cuda-loader=PATH        path to CUDA plugin (xmrig-cuda.dll or libxmrig-cuda.so)\n";
-    u += "      --cuda-devices=N          comma separated list of CUDA devices to use\n";
-    u += "      --cuda-bfactor-hint=N     bfactor hint for autoconfig (0-12)\n";
-    u += "      --cuda-bsleep-hint=N      bsleep hint for autoconfig\n";
-#   endif
-#   ifdef XMRIG_FEATURE_NVML
-    u += "      --no-nvml                 disable NVML (NVIDIA Management Library) support\n";
-#   endif
 
 #   ifdef XMRIG_FEATURE_HTTP
     u += "\nAPI:\n";
@@ -157,9 +137,6 @@ static inline const std::string &usage()
 
     u += "  -l, --log-file=FILE           log all output to a file\n";
     u += "      --print-time=N            print hashrate report every N seconds\n";
-#   if defined(XMRIG_FEATURE_NVML) || defined(XMRIG_FEATURE_ADL)
-    u += "      --health-print-time=N     print health report every N seconds\n";
-#   endif
     u += "      --no-color                disable colored output\n";
     u += "      --verbose                 verbose output\n";
 

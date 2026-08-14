@@ -205,12 +205,6 @@ void xmrig::Api::exec(IApiRequest &request)
 #       ifdef XMRIG_FEATURE_TLS
         features.PushBack("tls", allocator);
 #       endif
-#       ifdef XMRIG_FEATURE_OPENCL
-        features.PushBack("opencl", allocator);
-#       endif
-#       ifdef XMRIG_FEATURE_CUDA
-        features.PushBack("cuda", allocator);
-#       endif
         reply.AddMember("features", features, allocator);
     }
 

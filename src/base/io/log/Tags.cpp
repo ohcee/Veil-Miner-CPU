@@ -101,24 +101,8 @@ const char *xmrig::Tags::proxy()
 #endif
 
 
-#ifdef XMRIG_FEATURE_CUDA
-const char *xmrig::Tags::nvidia()
-{
-    static const char *tag = GREEN_BG_BOLD(WHITE_BOLD_S " nvidia  ");
-
-    return tag;
-}
-#endif
 
 
-#ifdef XMRIG_FEATURE_OPENCL
-const char *xmrig::Tags::opencl()
-{
-    static const char *tag = MAGENTA_BG_BOLD(WHITE_BOLD_S " opencl  ");
-
-    return tag;
-}
-#endif
 
 
 #ifdef XMRIG_FEATURE_PROFILING

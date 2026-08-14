@@ -69,22 +69,6 @@ R"===(
         "cn/0": false,
         "cn-lite/0": false
     },
-    "opencl": {
-        "enabled": false,
-        "cache": true,
-        "loader": null,
-        "platform": "AMD",
-        "adl": true,
-        "cn/0": false,
-        "cn-lite/0": false
-    },
-    "cuda": {
-        "enabled": false,
-        "loader": null,
-        "nvml": true,
-        "cn/0": false,
-        "cn-lite/0": false
-    },
     "log-file": null,
     "pools": [
         {
@@ -106,7 +90,6 @@ R"===(
         }
     ],
     "print-time": 60,
-    "health-print-time": 60,
     "dmi": true,
     "retries": 5,
     "retry-pause": 5,

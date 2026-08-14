@@ -112,20 +112,6 @@ public:
         Argon2ImplKey        = 1039,
         RandomXCacheQoSKey   = 1040,
 
-        // xmrig amd
-        OclPlatformKey       = 1400,
-        OclAffinityKey       = 1401,
-        OclDevicesKey        = 1402,
-        OclLaunchKey         = 1403,
-        OclCacheKey          = 1404,
-        OclPrintKey          = 1405,
-        OclLoaderKey         = 1406,
-        OclSridedIndexKey    = 1407,
-        OclMemChunkKey       = 1408,
-        OclUnrollKey         = 1409,
-        OclCompModeKey       = 1410,
-        OclKey               = 1411,
-
         // xmrig-proxy
         AccessLogFileKey     = 'A',
         BindKey              = 'b',
@@ -148,19 +134,6 @@ public:
         AlgoExtKey           = 1115,
         ProxyPasswordKey     = 1116,
         LoginFileKey         = 'L',
-
-        // xmrig nvidia
-        CudaMaxThreadsKey    = 1200,
-        CudaBFactorKey       = 1201,
-        CudaBSleepKey        = 1202,
-        CudaDevicesKey       = 1203,
-        CudaLaunchKey        = 1204,
-        CudaAffinityKey      = 1205,
-        CudaMaxUsageKey      = 1206,
-        CudaKey              = 1207,
-        CudaLoaderKey        = 1208,
-        NvmlKey              = 1209,
-        HealthPrintTimeKey   = 1210,
     };
 
     virtual ~IConfig() = default;

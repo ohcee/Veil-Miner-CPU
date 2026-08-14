@@ -137,26 +137,6 @@ static const option options[] = {
     { "randomx-cache-qos",     0, nullptr, IConfig::RandomXCacheQoSKey    },
     { "cache-qos",             0, nullptr, IConfig::RandomXCacheQoSKey    },
 #   endif
-#   ifdef XMRIG_FEATURE_OPENCL
-    { "opencl",                0, nullptr, IConfig::OclKey                },
-    { "opencl-devices",        1, nullptr, IConfig::OclDevicesKey         },
-    { "opencl-platform",       1, nullptr, IConfig::OclPlatformKey        },
-    { "opencl-loader",         1, nullptr, IConfig::OclLoaderKey          },
-    { "opencl-no-cache",       0, nullptr, IConfig::OclCacheKey           },
-#   endif
-#   ifdef XMRIG_FEATURE_CUDA
-    { "cuda",                  0, nullptr, IConfig::CudaKey               },
-    { "cuda-loader",           1, nullptr, IConfig::CudaLoaderKey         },
-    { "cuda-devices",          1, nullptr, IConfig::CudaDevicesKey        },
-    { "cuda-bfactor-hint",     1, nullptr, IConfig::CudaBFactorKey        },
-    { "cuda-bsleep-hint",      1, nullptr, IConfig::CudaBSleepKey         },
-#   endif
-#   ifdef XMRIG_FEATURE_NVML
-    { "no-nvml",               0, nullptr, IConfig::NvmlKey               },
-#   endif
-#   if defined(XMRIG_FEATURE_NVML) || defined (XMRIG_FEATURE_ADL)
-    { "health-print-time",     1, nullptr, IConfig::HealthPrintTimeKey    },
-#   endif
 #   ifdef XMRIG_FEATURE_DMI
     { "no-dmi",                0, nullptr, IConfig::DmiKey                },
 #   endif

@@ -46,13 +46,6 @@
 #endif
 
 
-#if defined(XMRIG_FEATURE_OPENCL) || defined(XMRIG_FEATURE_CUDA)
-#   include "base/tools/Baton.h"
-#   include "crypto/cn/CnCtx.h"
-#   include "crypto/cn/CnHash.h"
-#   include "crypto/cn/CryptoNight.h"
-#   include "crypto/common/VirtualMemory.h"
-#endif
 
 
 #include <cassert>
@@ -65,134 +58,6 @@
 namespace xmrig {
 
 
-#if defined(XMRIG_FEATURE_OPENCL) || defined(XMRIG_FEATURE_CUDA)
-class JobBundle
-{
-public:
-    inline JobBundle(const Job &job, uint32_t *results, size_t count, uint32_t device_index) :
-        job(job),
-        nonces(count),
-        device_index(device_index)
-    {
-        memcpy(nonces.data(), results, sizeof(uint32_t) * count);
-    }
-
-    Job job;
-    std::vector<uint32_t> nonces;
-    uint32_t device_index;
-};
-
-
-class JobBaton : public Baton<uv_work_t>
-{
-public:
-    inline JobBaton(std::list<JobBundle> &&bundles, IJobResultListener *listener, bool hwAES) :
-        hwAES(hwAES),
-        listener(listener),
-        bundles(std::move(bundles))
-    {}
-
-    const bool hwAES;
-    IJobResultListener *listener;
-    std::list<JobBundle> bundles;
-    std::vector<JobResult> results;
-    uint32_t errors = 0;
-};
-
-
-static inline void checkHash(const JobBundle &bundle, std::vector<JobResult> &results, uint32_t nonce, uint8_t hash[32], uint32_t &errors)
-{
-    if (*reinterpret_cast<uint64_t*>(hash + 24) < bundle.job.target()) {
-        results.emplace_back(bundle.job, nonce, hash);
-    }
-    else {
-        LOG_ERR("%s " RED_S "GPU #%u COMPUTE ERROR", backend_tag(bundle.job.backend()), bundle.device_index);
-        errors++;
-    }
-}
-
-
-static void getResults(JobBundle &bundle, std::vector<JobResult> &results, uint32_t &errors, bool hwAES)
-{
-    const auto &algorithm = bundle.job.algorithm();
-    auto memory           = new VirtualMemory(algorithm.l3(), false, false, false, 0, VirtualMemory::kDefaultHugePageSize);
-    alignas(16) uint8_t hash[32]{ 0 };
-
-    if (algorithm.family() == Algorithm::RANDOM_X) {
-#       ifdef XMRIG_ALGO_RANDOMX
-        RxDataset *dataset = Rx::dataset(bundle.job, 0);
-        if (dataset == nullptr) {
-            errors += bundle.nonces.size();
-            delete memory;
-
-            return;
-        }
-
-        auto vm = RxVm::create(dataset, memory->scratchpad(), !hwAES, Assembly::NONE, 0);
-
-        for (uint32_t nonce : bundle.nonces) {
-            *bundle.job.nonce() = nonce;
-
-            randomx_calculate_hash(vm, bundle.job.blob(), bundle.job.size(), hash);
-
-            checkHash(bundle, results, nonce, hash, errors);
-        }
-
-        RxVm::destroy(vm);
-#       endif
-    }
-    else if (algorithm.family() == Algorithm::ARGON2) {
-        errors += bundle.nonces.size(); // TODO ARGON2
-    }
-    else if (algorithm.family() == Algorithm::KAWPOW) {
-#       ifdef XMRIG_ALGO_KAWPOW
-        for (uint32_t nonce : bundle.nonces) {
-            *bundle.job.nonce() = nonce;
-
-            uint8_t header_hash[32];
-            uint64_t full_nonce;
-            memcpy(header_hash, bundle.job.blob(), sizeof(header_hash));
-            memcpy(&full_nonce, bundle.job.blob() + sizeof(header_hash), sizeof(full_nonce));
-
-            uint32_t output[8];
-            uint32_t mix_hash[8];
-            {
-                std::lock_guard<std::mutex> lock(KPCache::s_cacheMutex);
-
-                KPCache::s_cache.init(bundle.job.height() / KPHash::EPOCH_LENGTH);
-                KPHash::calculate(KPCache::s_cache, bundle.job.height(), header_hash, full_nonce, output, mix_hash);
-            }
-
-            for (size_t i = 0; i < sizeof(hash); ++i) {
-                hash[i] = ((uint8_t*)output)[sizeof(hash) - 1 - i];
-            }
-
-            if (*reinterpret_cast<uint64_t*>(hash + 24) < bundle.job.target()) {
-                results.emplace_back(bundle.job, full_nonce, (uint8_t*)output, bundle.job.blob(), (uint8_t*)mix_hash);
-            }
-            else {
-                LOG_ERR("%s " RED_S "GPU #%u COMPUTE ERROR", backend_tag(bundle.job.backend()), bundle.device_index);
-                ++errors;
-            }
-        }
-#       endif
-    }
-    else {
-        cryptonight_ctx *ctx[1];
-        CnCtx::create(ctx, memory->scratchpad(), memory->size(), 1);
-
-        for (uint32_t nonce : bundle.nonces) {
-            *bundle.job.nonce() = nonce;
-
-            CnHash::fn(algorithm, hwAES ? CnHash::AV_SINGLE : CnHash::AV_SINGLE_SOFT, Assembly::NONE)(bundle.job.blob(), bundle.job.size(), hash, ctx, bundle.job.height());
-
-            checkHash(bundle, results, nonce, hash, errors);
-        }
-    }
-
-    delete memory;
-}
-#endif
 
 
 class JobResultsPrivate : public IAsyncListener
@@ -220,15 +85,6 @@ public:
     }
 
 
-#   if defined(XMRIG_FEATURE_OPENCL) || defined(XMRIG_FEATURE_CUDA)
-    inline void submit(const Job &job, uint32_t *results, size_t count, uint32_t device_index)
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        m_bundles.emplace_back(job, results, count, device_index);
-
-        m_async->send();
-    }
-#   endif
 
 
 protected:
@@ -236,47 +92,6 @@ protected:
 
 
 private:
-#   if defined(XMRIG_FEATURE_OPENCL) || defined(XMRIG_FEATURE_CUDA)
-    inline void submit()
-    {
-        std::list<JobBundle> bundles;
-        std::list<JobResult> results;
-
-        m_mutex.lock();
-        m_bundles.swap(bundles);
-        m_results.swap(results);
-        m_mutex.unlock();
-
-        for (const auto &result : results) {
-            m_listener->onJobResult(result);
-        }
-
-        if (bundles.empty()) {
-            return;
-        }
-
-        auto baton = new JobBaton(std::move(bundles), m_listener, m_hwAES);
-
-        uv_queue_work(uv_default_loop(), &baton->req,
-            [](uv_work_t *req) {
-                auto baton = static_cast<JobBaton*>(req->data);
-
-                for (JobBundle &bundle : baton->bundles) {
-                    getResults(bundle, baton->results, baton->errors, baton->hwAES);
-                }
-            },
-            [](uv_work_t *req, int) {
-                auto baton = static_cast<JobBaton*>(req->data);
-
-                for (const auto &result : baton->results) {
-                    baton->listener->onJobResult(result);
-                }
-
-                delete baton;
-            }
-        );
-    }
-#   else
     inline void submit()
     {
         std::list<JobResult> results;
@@ -289,7 +104,6 @@ private:
             m_listener->onJobResult(result);
         }
     }
-#   endif
 
     const bool m_hwAES;
     IJobResultListener *m_listener;
@@ -297,9 +111,6 @@ private:
     std::mutex m_mutex;
     std::shared_ptr<Async> m_async;
 
-#   if defined(XMRIG_FEATURE_OPENCL) || defined(XMRIG_FEATURE_CUDA)
-    std::list<JobBundle> m_bundles;
-#   endif
 };
 
 
@@ -355,11 +166,3 @@ void xmrig::JobResults::submit(const JobResult &result)
 }
 
 
-#if defined(XMRIG_FEATURE_OPENCL) || defined(XMRIG_FEATURE_CUDA)
-void xmrig::JobResults::submit(const Job &job, uint32_t *results, size_t count, uint32_t device_index)
-{
-    if (handler) {
-        handler->submit(job, results, count, device_index);
-    }
-}
-#endif

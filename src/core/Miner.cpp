@@ -45,14 +45,8 @@
 #endif
 
 
-#ifdef XMRIG_FEATURE_OPENCL
-#   include "backend/opencl/OclBackend.h"
-#endif
 
 
-#ifdef XMRIG_FEATURE_CUDA
-#   include "backend/cuda/CudaBackend.h"
-#endif
 
 
 #ifdef XMRIG_ALGO_RANDOMX
@@ -416,13 +410,7 @@ xmrig::Miner::Miner(Controller *controller)
     d_ptr->backends.reserve(3);
     d_ptr->backends.push_back(new CpuBackend(controller));
 
-#   ifdef XMRIG_FEATURE_OPENCL
-    d_ptr->backends.push_back(new OclBackend(controller));
-#   endif
 
-#   ifdef XMRIG_FEATURE_CUDA
-    d_ptr->backends.push_back(new CudaBackend(controller));
-#   endif
 
     d_ptr->rebuild();
 }

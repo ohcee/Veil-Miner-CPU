@@ -50,13 +50,7 @@ public:
     static const char *proxy();
 #   endif
 
-#   ifdef XMRIG_FEATURE_CUDA
-    static const char *nvidia();
-#   endif
 
-#   ifdef XMRIG_FEATURE_OPENCL
-    static const char *opencl();
-#   endif
 
 #   ifdef XMRIG_FEATURE_PROFILING
     static const char* profiler();
