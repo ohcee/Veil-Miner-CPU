@@ -121,7 +121,7 @@ bool xmrig::RxDataset::init(const Buffer &seed, uint32_t numThreads, int priorit
         }
     }
     else {
-        init_dataset_wrapper(m_dataset, m_cache->get(), 0, datasetItemCount, priority);
+        init_dataset_wrapper(m_dataset, m_cache->get(), 0, static_cast<uint32_t>(datasetItemCount), priority);
     }
 
     return true;
