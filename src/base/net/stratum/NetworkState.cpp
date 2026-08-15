@@ -47,7 +47,7 @@ inline static void printCount(uint64_t accepted, uint64_t rejected)
         color       = 1;
     }
     else if (rejected) {
-        percent     = static_cast<float>(accepted) / (accepted + rejected) * 100.0;
+        percent     = static_cast<float>(accepted) / (accepted + rejected) * 100.0F;
         color       = 3;
     }
 
@@ -160,7 +160,7 @@ rapidjson::Value xmrig::NetworkState::getResults(rapidjson::Document &doc, int v
     results.AddMember("hashes_total",  m_hashes, allocator);
 
     Value best(kArrayType);
-    best.Reserve(m_topDiff.size(), allocator);
+    best.Reserve(static_cast<rapidjson::SizeType>(m_topDiff.size()), allocator);
 
     for (uint64_t i : m_topDiff) {
         best.PushBack(i, allocator);
