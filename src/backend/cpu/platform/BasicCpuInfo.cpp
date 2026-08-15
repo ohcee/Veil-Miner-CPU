@@ -156,6 +156,19 @@ static inline bool is_vm()          { return has_feature(PROCESSOR_INFO,        
 } // namespace xmrig
 
 
+// The 3rdparty argon2 library needs these for its x86_64 arch dispatch.
+// It is always built because RandomX cache initialization depends on it.
+extern "C" {
+
+
+int cpu_flags_has_avx2()    { return xmrig::has_avx2(); }
+int cpu_flags_has_avx512f() { return xmrig::has_avx512f(); }
+int cpu_flags_has_sse2()    { return xmrig::has_sse2(); }
+int cpu_flags_has_ssse3()   { return xmrig::has_ssse3(); }
+int cpu_flags_has_xop()     { return xmrig::has_xop(); }
+
+
+}
 
 
 xmrig::BasicCpuInfo::BasicCpuInfo() :
