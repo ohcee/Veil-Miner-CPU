@@ -14,7 +14,7 @@ void RxVeil::initJob(const uint8_t *blob, size_t blobSize, size_t nonceOffset,
 {
     sph_sha256_init(&ctxCache);
     sph_sha256(&ctxCache, blob, nonceOffset);
-    sha256d(reinterpret_cast<uint8_t*>(dsha256), blob, blobSize);
+    sha256d(reinterpret_cast<uint8_t*>(dsha256), blob, static_cast<int>(blobSize));
     randomx_calculate_hash_first(vm, tempHash, dsha256, 32);
 }
 

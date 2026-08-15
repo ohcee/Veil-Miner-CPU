@@ -545,7 +545,7 @@ extern "C" {
 			vm->setScratchpad(scratchpad);
 			vm->setFlags(flags);
 		}
-		catch (std::exception &ex) {
+		catch (const std::exception &) {
 			vm = nullptr;
 		}
 
