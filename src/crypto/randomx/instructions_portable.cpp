@@ -60,14 +60,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	#define HAVE_ROTL64
 	#define HAVE_ROTR64
 
-	#if EVAL_DEFINE(__MACHINEARM64_X64(1))
+	#if defined(_M_X64) || defined(_M_ARM64)
 		uint64_t mulh(uint64_t a, uint64_t b) {
 			return __umulh(a, b);
 		}
 		#define HAVE_MULH
 	#endif
 
-	#if EVAL_DEFINE(__MACHINEX64(1))
+	#if defined(_M_X64)
 		int64_t smulh(int64_t a, int64_t b) {
 			int64_t hi;
 			_mul128(a, b, &hi);

@@ -50,6 +50,7 @@ namespace randomx {
 		using VmBase<softAes>::datasetOffset;
 
 		void* operator new(size_t, void* ptr) { return ptr; }
+		void operator delete(void*, void*) {}
 		void operator delete(void*) {}
 
 		void run(void* seed) override;

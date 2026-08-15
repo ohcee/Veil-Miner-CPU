@@ -38,6 +38,7 @@ namespace randomx {
 	{
 	public:
 		void* operator new(size_t, void* ptr) { return ptr; }
+		void operator delete(void*, void*) {}
 		void operator delete(void*) {}
 
 		void setCache(randomx_cache* cache) override;

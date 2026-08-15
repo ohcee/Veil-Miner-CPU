@@ -181,13 +181,13 @@ RandomX_ConfigurationBase::RandomX_ConfigurationBase()
 		const uint8_t* a = addr(randomx_prefetch_scratchpad_bmi2);
 		const uint8_t* b = addr(randomx_prefetch_scratchpad_end);
 		memcpy(codePrefetchScratchpadTweaked, a, b - a);
-		codePrefetchScratchpadTweakedSize = b - a;
+		codePrefetchScratchpadTweakedSize = static_cast<uint32_t>(b - a);
 	}
 	else {
 		const uint8_t* a = addr(randomx_prefetch_scratchpad);
 		const uint8_t* b = addr(randomx_prefetch_scratchpad_bmi2);
 		memcpy(codePrefetchScratchpadTweaked, a, b - a);
-		codePrefetchScratchpadTweakedSize = b - a;
+		codePrefetchScratchpadTweakedSize = static_cast<uint32_t>(b - a);
 	}
 #	endif
 }
@@ -404,7 +404,7 @@ extern "C" {
 					UNREACHABLE;
 			}
 		}
-		catch (std::exception &ex) {
+		catch (const std::exception &) {
 			if (cache != nullptr) {
 				randomx_release_cache(cache);
 				cache = nullptr;

@@ -31,6 +31,10 @@ namespace xmrig {
 /*
  * Struct needed to get the SMBIOS table using GetSystemFirmwareTable API.
  */
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4200)
+#endif
 struct RawSMBIOSData {
     uint8_t	Used20CallingMethod;
     uint8_t	SMBIOSMajorVersion;
@@ -39,6 +43,9 @@ struct RawSMBIOSData {
     uint32_t Length;
     uint8_t	SMBIOSTableData[];
 };
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif
 
 
 } // namespace xmrig
