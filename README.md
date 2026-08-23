@@ -97,6 +97,39 @@ $zip = "xmrig-v6.25.0-veil-rc1-windows-x64.zip"
 (Get-FileHash $zip).Hash.ToLower() -eq ((Get-Content SHA256SUMS.txt | Select-String $zip) -split '\s+')[0]
 ```
 
+## Verifying the signature
+
+The checksum file only proves your download matches what was published. It cannot prove
+who published it, since anyone able to attach a release can also replace the sums file.
+The signature is what covers that: `SHA256SUMS.txt.asc` is a detached signature made on
+the maintainer's own machine, never in CI.
+
+Import the key once:
+
+```bash
+gpg --keyserver keys.openpgp.org --recv-keys 5C2CFA030397FCD763F1A97BF8788EFB40E750E5
+```
+
+Then check the sums file against it:
+
+```bash
+gpg --verify SHA256SUMS.txt.asc SHA256SUMS.txt
+```
+
+You want `Good signature from "ohcee <donkeybabe123@hotmail.com>"` with this primary key
+fingerprint:
+
+```
+5C2C FA03 0397 FCD7 63F1  A97B F878 8EFB 40E7 50E5
+```
+
+A warning that the key is not certified with a trusted signature is normal and only means
+you have not personally certified it. The fingerprint match is the part that matters, so
+compare it against a source you already trust rather than against the download page alone.
+
+Order of operations: verify the signature on `SHA256SUMS.txt`, then verify your download
+against `SHA256SUMS.txt`, then run it.
+
 ## Antivirus warnings
 
 Windows Defender and other scanners sometimes quarantine CPU miners on a machine
