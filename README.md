@@ -77,6 +77,39 @@ Or use a config file, which is the better way. The miner looks for `config.json`
 
 The full set of options is in [src/config.json](src/config.json). Huge pages make a real difference for RandomX, so run with them if you can. On Linux that usually means `sudo sysctl -w vm.nr_hugepages=1280` or letting the miner do it as root.
 
+## Verifying a download
+
+Every release ships a `SHA256SUMS.txt` written by the same CI run that built the
+archives, so you can confirm the file you downloaded is the one CI produced before
+you run it or add an antivirus exclusion for it. Put it next to the archive and run:
+
+```bash
+# Linux
+sha256sum -c SHA256SUMS.txt --ignore-missing
+
+# macOS
+shasum -a 256 -c SHA256SUMS.txt --ignore-missing
+```
+
+```powershell
+# Windows, prints True when the zip matches its line in SHA256SUMS.txt
+$zip = "xmrig-v6.25.0-veil-rc1-windows-x64.zip"
+(Get-FileHash $zip).Hash.ToLower() -eq ((Get-Content SHA256SUMS.txt | Select-String $zip) -split '\s+')[0]
+```
+
+## Antivirus warnings
+
+Windows Defender and other scanners sometimes quarantine CPU miners on a machine
+learning heuristic rather than a signature match, because mining software and
+malicious cryptojacking software do the same arithmetic. A detection named
+something like `Trojan:Win32/Bearfoos.B!ml` is that heuristic firing, not a
+statement that this build is malicious.
+
+The binaries here are built entirely in public CI from the source in this repo,
+never packed with UPX or any other packer, and every archive is covered by the
+`SHA256SUMS.txt` above. Verify the hash first. If it matches what CI published and
+you still want to run it, add an exclusion for the folder you extracted it to.
+
 ## License
 
 GPLv3, same as upstream. This fork exists because of the work of the [XMRig](https://github.com/xmrig) developers and [sech1](https://github.com/SChernykh), who wrote the fast RandomX code this miner is built on.
