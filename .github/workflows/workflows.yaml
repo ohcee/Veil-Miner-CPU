@@ -178,3 +178,35 @@ jobs:
             xmrig-*.zip
           retention-days: 30
           if-no-files-found: warn
+
+  # One SHA256SUMS.txt over every archive the build jobs produced, computed
+  # from those exact files. A release is those archives plus this file, so
+  # anyone can check a download before running it or adding an antivirus
+  # exclusion for it. Written here rather than by hand so the sums always
+  # describe what CI actually built.
+  checksums:
+    name: checksums
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download every archive
+        uses: actions/download-artifact@v7
+        with:
+          pattern: xmrig-*
+          merge-multiple: true
+          path: dist
+
+      - name: Write SHA256SUMS.txt
+        shell: bash
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          ls -l
+          sha256sum xmrig-* > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Upload SHA256SUMS.txt
+        uses: actions/upload-artifact@v7
+        with:
+          name: SHA256SUMS
+          path: dist/SHA256SUMS.txt
