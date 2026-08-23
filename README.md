@@ -1,5 +1,8 @@
 # XMRig-Veil
 
+[![CI](https://github.com/ohcee/Veil-Miner-CPU/actions/workflows/workflows.yaml/badge.svg)](https://github.com/ohcee/Veil-Miner-CPU/actions/workflows/workflows.yaml)
+[![Release](https://img.shields.io/github/v/release/ohcee/Veil-Miner-CPU?include_prereleases)](https://github.com/ohcee/Veil-Miner-CPU/releases)
+
 A CPU miner for [Veil](https://veil-project.com) and nothing else.
 
 This is a fork of [XMRig](https://github.com/xmrig/xmrig) 6.25.0 stripped down to a single algorithm: `rx/veil`, the RandomX variant Veil uses for CPU mining. Veil hashes RandomX over the double SHA256 of the block header, and this miner caches the SHA256 midstate so only the nonce tail is rehashed on every attempt.
