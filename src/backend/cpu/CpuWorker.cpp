@@ -176,7 +176,7 @@ void xmrig::CpuWorker<N>::start()
 #           ifdef XMRIG_ALGO_RANDOMX
             if (job.algorithm().id() == Algorithm::RX_VEIL) {
                 if (first) {
-                    RxVeil::initJob(job.blob(), job.size(), m_job.nonceOffset(),
+                    RxVeil::initJob(m_job.blob(), job.size(), m_job.nonceOffset(),
                                     sha256_ctx_cache, dsha256, m_vm, tempHash);
                     first = false;
                 }
