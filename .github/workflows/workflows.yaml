@@ -37,7 +37,9 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: |
           sudo apt update
-          sudo apt install -y cmake build-essential libuv1-dev libssl-dev libhwloc-dev
+          # build tools for the static deps; the -dev libs are deliberately
+          # left out so cmake links the static hwloc/uv/openssl, not apt's
+          sudo apt install -y cmake build-essential autoconf automake libtool pkg-config wget
 
       - name: Install deps (macOS)
         if: startsWith(matrix.os, 'macos')
@@ -66,7 +68,10 @@ jobs:
       - name: Configure (Linux)
         if: startsWith(matrix.os, 'ubuntu')
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          # build static hwloc, libuv and openssl so the release binary needs
+          # no apt installs; glibc stays dynamic so DNS resolution still works
+          (cd scripts && ./build_deps.sh)
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DXMRIG_DEPS="$(pwd)/scripts/deps"
 
       - name: Configure (macOS)
         if: startsWith(matrix.os, 'macos')
@@ -100,6 +105,15 @@ jobs:
         shell: cmd
         run: |
           cmake --build build --config Release
+
+      - name: Confirm the linux binary is self contained
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          readelf -d build/xmrig | tee /tmp/dyn.txt
+          if grep -Ei 'NEEDED.*(libhwloc|libuv|libssl|libcrypto)' /tmp/dyn.txt; then
+            echo "::error::binary still links hwloc/uv/openssl dynamically"; exit 1
+          fi
+          echo "static deps ok, only glibc remains"
 
       # =====================
       # Package
